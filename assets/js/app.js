@@ -164,11 +164,8 @@
       call.href = telHref(CFG.contact.phone);
       cta.appendChild(call);
     }
-    if (CFG.contact.mapQuery || CFG.contact.address) {
-      const dir = el("a", "btn btn-outline", icon("navigation") + `<span>${ui("directions")}</span>`);
-      dir.href = mapsLink(); dir.target = "_blank"; dir.rel = "noopener";
-      cta.appendChild(dir);
-    }
+    // (No "Οδηγίες"/Directions button over the hero — removed by request. The
+    //  Google map still lives in the bottom location section.)
     return sec;
   }
 
@@ -451,8 +448,10 @@
         grid.innerHTML = list.map(reviewCard).join("");
         wireReviewExpanders(grid);
       } else {
+        // No individual cards → just the overall rating + the Google button.
+        // (No "Δείτε τι λένε..." line — removed by request.)
         grid.classList.add("is-empty");
-        grid.innerHTML = `<p class="reviews-empty">${escapeHtml(ui("reviews_empty"))}</p>`;
+        grid.innerHTML = "";
       }
       foot.innerHTML = (noteHtml || "") + seeAll(url);
     };
@@ -587,7 +586,11 @@
   // blockquote.instagram-media on the page into real post cards.
   function processInstagramPosts() {
     const run = () => { if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process(); };
-    if (document.getElementById("ig-embed-js")) { run(); return; }
+    // IMPORTANT: when the language is switched we re-render synchronously, so the
+    // fresh blockquotes aren't in the DOM yet at this call. Defer to the next
+    // frame so process() sees them — otherwise the embeds come up blank in the
+    // other language. (First load already worked because embed.js loads async.)
+    if (document.getElementById("ig-embed-js")) { requestAnimationFrame(run); return; }
     const s = document.createElement("script");
     s.id = "ig-embed-js"; s.async = true; s.src = "https://www.instagram.com/embed.js";
     s.onload = run;
@@ -646,24 +649,34 @@
     } else if (feedUrl) {
       feed = `<div class="ig-feed" aria-live="polite"><div class="ig-loading">${icon("instagram")}<span>…</span></div></div>`;
     } else if (posts.length) {
-      // Premium horizontal carousel: one embed centered, prev/next peeking.
-      // Each official embed sits in OUR restrained black/gold frame; the embed
-      // itself is untouched. No `data-instgrm-captioned` (hide long captions).
-      // A plain link inside each blockquote is the fallback if IG is blocked —
-      // embed.js replaces it with the real post when it processes.
-      const slides = posts.map((permalink) => {
+      // Premium INFINITE horizontal carousel: one embed centered, prev/next
+      // peeking. Each official embed sits in OUR restrained black/gold frame;
+      // the embed itself is untouched (no `data-instgrm-captioned`). A plain
+      // link inside each blockquote is the fallback if IG is blocked.
+      // For a seamless loop we add 2 clone slides at each end (identical real
+      // embeds) and jump instantly once a clone centers — see initIgCarousels.
+      // `data-i` is each slide's STABLE real index (0..n-1); dots map to reals.
+      const slide = (permalink, realIdx, isClone) => {
         const p = escapeHtml(permalink);
-        return `<div class="ig-slide"><div class="ig-frame">` +
-          `<blockquote class="instagram-media" data-instgrm-permalink="${p}" data-instgrm-version="14">` +
+        return `<div class="ig-slide${isClone ? " ig-clone" : ""}" data-i="${realIdx}"${isClone ? ' aria-hidden="true"' : ""}>` +
+          `<div class="ig-frame"><blockquote class="instagram-media" data-instgrm-permalink="${p}" data-instgrm-version="14">` +
           `<a class="ig-fallback" href="${p}" target="_blank" rel="noopener noreferrer">${icon("instagram")}<span>Instagram</span></a>` +
           `</blockquote></div></div>`;
-      }).join("");
+      };
+      const n = posts.length;
+      const order = [];
+      if (n > 1) order.push([posts[n - 2], n - 2], [posts[n - 1], n - 1]);   // leading clones
+      const lead = order.length;
+      posts.forEach((p, i) => order.push([p, i]));                            // the real slides
+      if (n > 1) order.push([posts[0], 0], [posts[1], 1]);                    // trailing clones
+      const slidesHtml = order.map(([p, i], pos) =>
+        slide(p, i, pos < lead || pos >= lead + n)).join("");
       const dots = posts.map((_, i) =>
-        `<button type="button" class="ig-dot${i === 0 ? " active" : ""}" aria-label="${i + 1}"></button>`).join("");
+        `<button type="button" class="ig-dot${i === 0 ? " active" : ""}" data-i="${i}" aria-label="${i + 1}"></button>`).join("");
       feed = `
         <div class="ig-carousel-wrap">
           <button type="button" class="ig-arrow ig-prev" aria-label="${escapeHtml(ui("prev"))}">${icon("chevronLeft")}</button>
-          <div class="ig-carousel" tabindex="0" role="region" aria-label="Instagram">${slides}</div>
+          <div class="ig-carousel" tabindex="0" role="region" aria-label="Instagram">${slidesHtml}</div>
           <button type="button" class="ig-arrow ig-next" aria-label="${escapeHtml(ui("next"))}">${icon("chevronRight")}</button>
         </div>
         <div class="ig-dots" role="tablist">${dots}</div>`;
@@ -962,41 +975,55 @@
     });
   }
 
-  /* ---------- Instagram carousel: snap scroll + arrows + dots + drag ----------
-     Distinct from the auto-scrolling service carousel (which clones its cards —
-     we must NOT clone IG embeds). Native overflow gives trackpad + touch swipe;
-     we add arrows, dots, mouse-drag and keyboard on top. */
+  /* ---------- Instagram carousel: INFINITE snap scroll + arrows + dots + drag --
+     Distinct from the auto-scrolling service carousel. Slides include clones at
+     both ends (built in renderInstagram); when a clone centers we jump instantly
+     to its identical real twin, so the loop is seamless with no empty end. Dots
+     track the STABLE real index (data-i). embed.js is still loaded/processed once. */
   function initIgCarousels() {
     document.querySelectorAll("#app .ig-carousel").forEach((car) => {
       const sec = car.closest("section");
       const slides = Array.from(car.querySelectorAll(".ig-slide"));
-      if (!sec || !slides.length) return;
+      if (!sec || slides.length < 2) return;
       const dots = Array.from(sec.querySelectorAll(".ig-dot"));
       const prev = sec.querySelector(".ig-prev");
       const next = sec.querySelector(".ig-next");
+      const clamp = (i) => Math.max(0, Math.min(slides.length - 1, i));
+      const isClone = (s) => s.classList.contains("ig-clone");
+      const realIdx = (s) => Number(s.dataset.i) || 0;
+      // DOM index of the (first) REAL slide for a given real index.
+      const realDom = (ri) => slides.findIndex((s) => !isClone(s) && realIdx(s) === ri);
       const centerOf = (s) => s.offsetLeft - (car.clientWidth - s.clientWidth) / 2;
-      const current = () => {
+      const nearest = () => {
         const mid = car.scrollLeft + car.clientWidth / 2;
         let best = 0, bd = Infinity;
         slides.forEach((s, i) => { const d = Math.abs((s.offsetLeft + s.clientWidth / 2) - mid); if (d < bd) { bd = d; best = i; } });
         return best;
       };
-      const go = (i) => {
-        i = Math.max(0, Math.min(slides.length - 1, i));
-        car.scrollTo({ left: centerOf(slides[i]), behavior: "smooth" });
+      const jump = (i) => { car.scrollLeft = centerOf(slides[clamp(i)]); };     // instant
+      const go = (i) => { car.scrollTo({ left: centerOf(slides[clamp(i)]), behavior: "smooth" }); };
+      const syncDots = () => {
+        const ri = realIdx(slides[nearest()]);
+        dots.forEach((d) => d.classList.toggle("active", Number(d.dataset.i) === ri));
       };
-      const sync = () => { const i = current(); dots.forEach((d, k) => d.classList.toggle("active", k === i)); };
-      if (prev) prev.addEventListener("click", () => go(current() - 1));
-      if (next) next.addEventListener("click", () => go(current() + 1));
-      dots.forEach((d, i) => d.addEventListener("click", () => go(i)));
+      // When movement settles on a clone, hop to the identical real slide.
+      let settle = 0;
+      const onSettle = () => {
+        const s = slides[nearest()];
+        if (s && isClone(s)) jump(realDom(realIdx(s)));
+        syncDots();
+      };
       let ticking = false;
       car.addEventListener("scroll", () => {
-        if (ticking) return; ticking = true;
-        requestAnimationFrame(() => { sync(); ticking = false; });
+        if (!ticking) { ticking = true; requestAnimationFrame(() => { syncDots(); ticking = false; }); }
+        clearTimeout(settle); settle = setTimeout(onSettle, 140);
       }, { passive: true });
+      if (prev) prev.addEventListener("click", () => go(nearest() - 1));
+      if (next) next.addEventListener("click", () => go(nearest() + 1));
+      dots.forEach((d) => d.addEventListener("click", () => go(realDom(Number(d.dataset.i)))));
       car.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowLeft") { e.preventDefault(); go(current() - 1); }
-        else if (e.key === "ArrowRight") { e.preventDefault(); go(current() + 1); }
+        if (e.key === "ArrowLeft") { e.preventDefault(); go(nearest() - 1); }
+        else if (e.key === "ArrowRight") { e.preventDefault(); go(nearest() + 1); }
       });
       // Mouse drag-to-scroll (touch/trackpad already work natively). Over the IG
       // iframe the events won't fire — the frame padding / peeks give a grab area.
@@ -1011,11 +1038,12 @@
         if (Math.abs(dx) > 3) moved = true;
         car.scrollLeft = startLeft - dx;
       });
-      const end = () => { if (!down) return; down = false; car.classList.remove("dragging"); go(current()); };
+      const end = () => { if (!down) return; down = false; car.classList.remove("dragging"); go(nearest()); };
       car.addEventListener("pointerup", end);
       car.addEventListener("pointerleave", end);
       car.addEventListener("click", (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
-      sync();
+      // Start centered on the first REAL slide (after layout), then sync dots.
+      requestAnimationFrame(() => { jump(realDom(0)); syncDots(); });
     });
   }
 

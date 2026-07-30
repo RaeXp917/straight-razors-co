@@ -139,7 +139,7 @@ const demoReviews = {
   summary: { rating: "5.0", count: 120 },
   items: [
     { quote: { el: "Εξαιρετική εξυπηρέτηση, θα ξαναπάω σίγουρα!", en: "Excellent service, I'll definitely be back!" }, author: "Google review", rating: 5 },
-    { quote: { el: "Επαγγελματίες και ευγενικοί — τους συνιστώ ανεπιφύλακτα.", en: "Professional and friendly — highly recommend." }, author: "Google review", rating: 5 },
+    { quote: { el: "Επαγγελματίες και ευγενικοί, τους συνιστώ ανεπιφύλακτα.", en: "Professional and friendly, highly recommend." }, author: "Google review", rating: 5 },
     { quote: { el: "Άψογη ποιότητα και περιβάλλον. Πολύ ευχαριστημένος!", en: "Flawless quality and atmosphere. Very happy!" }, author: "Google review", rating: 5 }
   ]
 };
@@ -240,7 +240,7 @@ const BUSINESS_PRESETS = {
     theme: { primary: "#301610", accent: "#ed6a2e", accent2: "#b8401c", bg: "#fff8f2", surface: "#fff0e4", wood: "#e5b27d", dark: false },
     demo: {
       tagline: { el: "Φρέσκο, γρήγορο και νόστιμο", en: "Fresh, fast and tasty" },
-      about: { text: { el: "Φτιάχνουμε καθημερινά με φρέσκα υλικά και αγάπη — γρήγορο σερβίρισμα, μεγάλη γεύση.", en: "Made daily with fresh ingredients and love — fast service, big flavour." } },
+      about: { text: { el: "Φτιάχνουμε καθημερινά με φρέσκα υλικά και αγάπη, γρήγορο σερβίρισμα, μεγάλη γεύση.", en: "Made daily with fresh ingredients and love, fast service, big flavour." } },
       menu: { categories: [
         { name: { el: "Burgers", en: "Burgers" }, items: [
           { name: { el: "Classic Burger", en: "Classic Burger" }, desc: { el: "Μοσχάρι, cheddar, σπιτική σος", en: "Beef, cheddar, house sauce" }, price: "€6.50" },

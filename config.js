@@ -57,11 +57,11 @@ const SITE_CONFIG = {
     enabled: true,
     days: [
       { el: "Δευτέρα",    en: "Monday",    open: "Κλειστά / Closed" },
-      { el: "Τρίτη",      en: "Tuesday",   open: "10:00 - 21:00" },
-      { el: "Τετάρτη",    en: "Wednesday", open: "10:00 - 21:00" },
-      { el: "Πέμπτη",     en: "Thursday",  open: "10:00 - 21:00" },
-      { el: "Παρασκευή",  en: "Friday",    open: "10:00 - 21:00" },
-      { el: "Σάββατο",    en: "Saturday",  open: "09:00 - 17:00" },
+      { el: "Τρίτη",      en: "Tuesday",   open: "10:00 έως 21:00" },
+      { el: "Τετάρτη",    en: "Wednesday", open: "10:00 έως 21:00" },
+      { el: "Πέμπτη",     en: "Thursday",  open: "10:00 έως 21:00" },
+      { el: "Παρασκευή",  en: "Friday",    open: "10:00 έως 21:00" },
+      { el: "Σάββατο",    en: "Saturday",  open: "09:00 έως 17:00" },
       { el: "Κυριακή",    en: "Sunday",    open: "Κλειστά / Closed" }
     ]
   },
@@ -74,8 +74,8 @@ const SITE_CONFIG = {
       en: "Straight Razors Co"
     },
     subtitle: {
-      el: "★ 5.0 με 117 κριτικές στο Google — το κούρεμα που ταξιδεύουν από τη Θεσσαλονίκη για να κάνουν.",
-      en: "★ 5.0 with 117 Google reviews — the cut people drive in from Thessaloniki for."
+      el: "★ 5.0 με 117 κριτικές στο Google. Η φροντίδα σας είναι η προτεραιότητά μας.",
+      en: "★ 5.0 with 117 Google reviews. Your care is our priority."
     },
     ctaText: { el: "Καλέστε μας", en: "Call us" }
   },
@@ -234,9 +234,18 @@ const SITE_CONFIG = {
     ctaText:  { el: "Δείτε όλες τις δουλειές μας στο Instagram",
                 en: "See all our work on Instagram" },
 
-    /* Six real posts rendered ON the page as a gallery, via Instagram's OFFICIAL
+    /* Six real posts rendered ON the page as a carousel, via Instagram's OFFICIAL
        embed (embed.js). No API, no scraping, no rehosting — just the permalinks.
-       Open a post → Share → Copy link to add/replace any of these. */
+       Open a post → Share → Copy link to add/replace any of these.
+
+       NOTE ON FUTURE POSTS: these are STATIC embeds — they do NOT auto-update
+       when the shop posts something new; someone must paste the new links here.
+       Automatic discovery of the newest posts would require a one-time
+       authorization of the Instagram *professional* account via the official
+       Instagram Graph API + a small server-side token store (this project has
+       NO such integration today, and none is added here — no scraping/workaround).
+       The engine already supports it: set `feedUrl` to your own backend's
+       CORS-enabled JSON feed and it renders that instead of this list. */
     posts: [
       "https://www.instagram.com/reel/DRO0BxoCLad/",
       "https://www.instagram.com/reel/DCpc2yesPtS/",
