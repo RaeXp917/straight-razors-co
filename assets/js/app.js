@@ -442,24 +442,56 @@
     document.body.appendChild(s);
   }
 
+  // AUTOMATED FEED: fetch a JSON feed (a scraper proxy such as rss.app that turns
+  // the public profile into a CORS-enabled JSON Feed) and render the latest posts
+  // as a grid. Runs on every load, so it always shows current posts with zero
+  // admin work. On any failure it silently falls back to the Follow card.
+  function loadInstagramFeed(holder, feedUrl, profileUrl, at, limit) {
+    if (!holder || typeof fetch !== "function") return;
+    const fallback = () => {
+      holder.className = "ig-card-wrap";
+      holder.innerHTML = profileUrl
+        ? `<a class="ig-card" href="${profileUrl}" target="_blank" rel="noopener">${icon("instagram")}${at ? `<span>${escapeHtml(at)}</span>` : ""}</a>`
+        : "";
+    };
+    fetch(feedUrl, { mode: "cors" })
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((data) => {
+        const items = ((data && data.items) || []).slice(0, limit || 12);
+        if (!items.length) return fallback();
+        holder.innerHTML = items.map((it) => {
+          const img = it.image || it.banner_image || (it.attachments && it.attachments[0] && it.attachments[0].url) || "";
+          const link = it.url || it.external_url || profileUrl || "";
+          const cap = escapeHtml(String(it.title || it.summary || "").slice(0, 160));
+          if (!img) return "";
+          return `<a class="ig-tile" href="${link}" target="_blank" rel="noopener" title="${cap}">` +
+                 `<img src="${img}" alt="${cap}" loading="lazy" onerror="this.closest('.ig-tile').remove()"></a>`;
+        }).join("") || (fallback(), "");
+      })
+      .catch(fallback);
+  }
+
   function renderInstagram(ig) {
     ig = ig || {};
     const handle = String(ig.handle || "").replace(/^@/, "");
     const url = ig.url || (handle ? `https://www.instagram.com/${handle}/` : "");
     const posts = Array.isArray(ig.posts) ? ig.posts.map((p) => (typeof p === "string" ? p : (p && p.url) || "")).filter(Boolean) : [];
-    if (!url && !ig.embedHtml && !posts.length) return null;   // nothing to show
+    const feedUrl = ig.feedUrl || "";
+    if (!url && !ig.embedHtml && !posts.length && !feedUrl) return null;   // nothing to show
     const title = sectionLabel("instagram", ig);
     const at = handle ? "@" + handle : "";
     const sub = t(ig.subtitle) || ui("ig_subtitle");
     const follow = url
       ? `<a class="btn btn-accent ig-follow" href="${url}" target="_blank" rel="noopener">${icon("instagram")}<span>${escapeHtml(ui("ig_follow"))}</span></a>`
       : "";
-    // Feed priority: a widget snippet (auto-updating grid) → official post embeds
-    // (a real in-page, scrollable strip of the posts you list) → a CTA card that
-    // links to the profile. Stories are never embeddable — the button opens IG.
+    // Feed priority: widget snippet (auto grid) → auto JSON feed (scraper proxy,
+    // renders on load) → official post embeds (posts you list) → a CTA card. The
+    // feed shows a loading state first. Stories are never embeddable via any of these.
     let feed;
     if (ig.embedHtml) {
       feed = `<div class="ig-embed"></div>`;
+    } else if (feedUrl) {
+      feed = `<div class="ig-feed" aria-live="polite"><div class="ig-loading">${icon("instagram")}<span>…</span></div></div>`;
     } else if (posts.length) {
       const cards = posts.map((permalink) =>
         `<blockquote class="instagram-media" data-instgrm-permalink="${escapeHtml(permalink)}" data-instgrm-version="14"></blockquote>`).join("");
@@ -476,6 +508,7 @@
       ${follow ? `<div class="ig-cta">${follow}</div>` : ""}`;
     const sec = titledSection("instagram", title, inner, "instagram-section");
     if (ig.embedHtml) injectEmbed(sec.querySelector(".ig-embed"), ig.embedHtml);
+    else if (feedUrl) loadInstagramFeed(sec.querySelector(".ig-feed"), feedUrl, url, at, ig.limit);
     else if (posts.length) processInstagramPosts();
     return sec;
   }

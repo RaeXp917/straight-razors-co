@@ -200,11 +200,25 @@ const SITE_CONFIG = {
     enabled:  true,
     handle:   "straight_razors_co_2019",
     url:      "https://www.instagram.com/straight_razors_co_2019/",
-    // (A) INSTANT: paste his post/reel links here, e.g.
-    //   "https://www.instagram.com/p/XXXXXXXXX/",
-    //   "https://www.instagram.com/reel/YYYYYYYYY/",
-    posts: [],
-    // (B) Optional auto-updating widget snippet (keep the backticks):
-    embedHtml: ``
+
+    /* ▶ AUTOMATED FEED (chosen route) — the barber never touches anything.
+       The site fetches this JSON feed on every load, so it always shows his
+       latest posts automatically. Set it up ONCE:
+         1. Go to https://rss.app  → sign up (free).
+         2. New Feed → paste his profile URL (the `url` above) → Generate.
+         3. Open the feed → copy its **JSON Feed** URL
+            (looks like  https://rss.app/feeds/v1.1/XXXXXXXX.json ).
+         4. Paste that URL as `feedUrl` below.
+       The feed must be CORS-enabled (rss.app is) so the browser can read it.
+       If the feed is ever empty/down, the section auto-falls back to the
+       Follow button. NOTE: this scrapes the public profile — it can break if
+       the provider changes; and STORIES are NOT available through it (no
+       website can embed stories). */
+    feedUrl: "",
+    limit:   12,   // how many posts to show
+
+    // Fallbacks if feedUrl is empty:
+    posts: [],      // paste specific post/reel links to show those instead
+    embedHtml: ``   // or an official widget embed snippet (takes priority)
   }
 };
