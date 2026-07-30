@@ -517,6 +517,8 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 .pl-grouphead { padding-top: 16px; padding-bottom: 2px; }
 .pl-grouphead .pl-name { color: var(--accent); font-weight: 700; font-family: var(--font); font-size: 1.08rem; }
 .pl-sub .pl-name { padding-left: 16px; }
+.pl-sub .pl-name::before { content: "•"; color: color-mix(in srgb, var(--accent) 70%, transparent); margin-right: 8px; }
+.pl-note { padding: 6px 0 2px 16px; color: var(--muted); font-size: .9rem; font-style: italic; }
 @media (max-width: 760px) {
   .pl-wrap { flex-direction: column; gap: 24px; }
   .pl-logo { width: 160px; max-width: 55%; }

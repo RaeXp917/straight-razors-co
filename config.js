@@ -232,7 +232,19 @@ const SITE_CONFIG = {
       { name: { el: "Περιποίηση SPA", en: "SPA Treatment" }, items: [
         { name: { el: "Μάσκα Νεκράς Θάλασσας (Ενυδατώνει & Θρέφει την Επιδερμίδα)", en: "Dead Sea Mask (hydrates & nourishes the skin)" }, price: "5.00€" },
         { name: { el: "Το Δεύτερο Λούσιμο", en: "The Second Wash" },        price: "2.00€" }
-      ] }
+      ] },
+      // Package: the 50€ covers everything below (sub-items shown without a
+      // per-item price on purpose — they're included, not free).
+      { name: { el: "Γαμπριάτικο Πακέτο", en: "Groom's Package" }, price: "50.00€",
+        note: { el: "Όλο το πακέτο σε 2 ραντεβού", en: "The whole package over 2 appointments" },
+        items: [
+          { name: { el: "Κούρεμα", en: "Haircut" } },
+          { name: { el: "Ξύρισμα", en: "Shave" } },
+          { name: { el: "Περιποίηση Γενειάδας", en: "Beard grooming" } },
+          { name: { el: "Αποτρίχωση με Κερί", en: "Waxing" } },
+          { name: { el: "Μάσκα Προσώπου Ενυδάτωσης", en: "Moisturizing face mask" } },
+          { name: { el: "Καθαρισμός Αυχένα", en: "Nape cleanup" } }
+        ] }
     ]
   }
 };

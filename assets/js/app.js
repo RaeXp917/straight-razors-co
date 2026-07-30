@@ -525,8 +525,9 @@
     const line = (it, cls) => `<div class="pl-row${cls ? " " + cls : ""}"><span class="pl-name">${escapeHtml(tx(it.name))}</span>${priceCell(it.price)}</div>`;
     const blocks = items.map((it) => {
       if (it.items && it.items.length) {
+        const note = it.note ? `<div class="pl-note">${escapeHtml(tx(it.note))}</div>` : "";
         return `<div class="pl-group"><div class="pl-row pl-grouphead"><span class="pl-name">${escapeHtml(tx(it.name))}</span>${priceCell(it.price)}</div>` +
-          it.items.map((s) => line(s, "pl-sub")).join("") + `</div>`;
+          it.items.map((s) => line(s, "pl-sub")).join("") + note + `</div>`;
       }
       return line(it);
     }).join("");
