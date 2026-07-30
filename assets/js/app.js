@@ -442,10 +442,10 @@
     document.body.appendChild(s);
   }
 
-  // AUTOMATED FEED: fetch a JSON feed (a scraper proxy such as rss.app that turns
-  // the public profile into a CORS-enabled JSON Feed) and render the latest posts
-  // as a grid. Runs on every load, so it always shows current posts with zero
-  // admin work. On any failure it silently falls back to the Follow card.
+  // AUTOMATED FEED: fetch a CORS-enabled JSON feed — from YOUR OWN backend that
+  // uses the official Instagram Graph API (NOT a scraper) — and render the latest
+  // posts as a grid. Runs on every load, so it always shows current posts with
+  // zero admin work. On any failure it silently falls back to the Follow card.
   function loadInstagramFeed(holder, feedUrl, profileUrl, at, limit) {
     if (!holder || typeof fetch !== "function") return;
     const fallback = () => {

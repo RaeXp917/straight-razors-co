@@ -201,24 +201,15 @@ const SITE_CONFIG = {
     handle:   "straight_razors_co_2019",
     url:      "https://www.instagram.com/straight_razors_co_2019/",
 
-    /* ▶ AUTOMATED FEED (chosen route) — the barber never touches anything.
-       The site fetches this JSON feed on every load, so it always shows his
-       latest posts automatically. Set it up ONCE:
-         1. Go to https://rss.app  → sign up (free).
-         2. New Feed → paste his profile URL (the `url` above) → Generate.
-         3. Open the feed → copy its **JSON Feed** URL
-            (looks like  https://rss.app/feeds/v1.1/XXXXXXXX.json ).
-         4. Paste that URL as `feedUrl` below.
-       The feed must be CORS-enabled (rss.app is) so the browser can read it.
-       If the feed is ever empty/down, the section auto-falls back to the
-       Follow button. NOTE: this scrapes the public profile — it can break if
-       the provider changes; and STORIES are NOT available through it (no
-       website can embed stories). */
-    feedUrl: "",
-    limit:   12,   // how many posts to show
+    /* This is an ad / business-card site (customers CALL the shop to book), so
+       Instagram is just a link. The section shows a "Follow on Instagram"
+       button that opens his profile — posts AND stories, all native in the app.
+       No API, no scraping, nothing to maintain.
 
-    // Fallbacks if feedUrl is empty:
-    posts: [],      // paste specific post/reel links to show those instead
-    embedHtml: ``   // or an official widget embed snippet (takes priority)
+       OPTIONAL — to also show a few real posts ON the page (still no API, no
+       account setup): paste post/reel links into `posts` (open the post →
+       Share → Copy link). They render via Instagram's official embed. Leave
+       it empty for just the button. */
+    posts: []
   }
 };
