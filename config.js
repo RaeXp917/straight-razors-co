@@ -179,10 +179,10 @@ const SITE_CONFIG = {
                 en: "Don't take our word for it — trust our customers!" },
     subtitle: { el: "Αληθινές αξιολογήσεις από πελάτες μας στο Google",
                 en: "Real reviews from our customers on Google" },
-    // "See all reviews" target. Leave "" to fall back to the Google Maps pin
-    // (built from contact.mapQuery). The feed can also set it per-refresh via
-    // the GOOGLE_REVIEWS_PAGE_URL environment variable.
-    reviewsPageUrl: ""
+    // "See all reviews" target — the shop's real Google Maps page. Powers the
+    // button under the cards (and the empty-state link) right now. Once the API
+    // is connected, GOOGLE_REVIEWS_PAGE_URL (if set) overrides this per-refresh.
+    reviewsPageUrl: "https://maps.app.goo.gl/W4EtoYu93Jstg7mm6"
   },
 
   /* --- 13. SOCIAL LINKS ---------------------------------------------------- */
