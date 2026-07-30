@@ -5,7 +5,8 @@ name: Refresh Google reviews
 # cache assets/data/reviews.json, and commits it so GitHub Pages serves it.
 on:
   schedule:
-    - cron: "0 */6 * * *"      # every 6 hours
+    - cron: "*/30 * * * *"     # every 30 minutes (it only commits when a review
+                                # actually changed, so quiet runs cost nothing)
   workflow_dispatch: {}         # allow a manual run from the Actions tab
 
 permissions:
