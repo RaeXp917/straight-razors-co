@@ -208,14 +208,27 @@
     if (!items.length) return null;
     const title = sectionLabel("products", p);
     const cards = items.map((it) => {
+      const name = escapeHtml(tx(it.name));
+      const desc = t(it.desc) ? `<p>${escapeHtml(t(it.desc))}</p>` : "";
+      // Brand mode: an item with `url` renders as a simple wordmark "logo" (the
+      // brand NAME as text — no third-party logo artwork) that links to the
+      // brand's official site. Legal: nominative fair use + a plain link.
+      if (it.url) {
+        const host = String(it.url).replace(/^https?:\/\//i, "").replace(/\/.*$/, "").replace(/^www\./i, "");
+        return `<a class="product-card brand-card reveal" href="${escapeHtml(it.url)}" target="_blank" rel="noopener nofollow">
+            <div class="brand-media"><span class="brand-wordmark">${name}</span></div>
+            ${desc}
+            <span class="brand-site">${icon("globe")}${escapeHtml(host)}</span>
+          </a>`;
+      }
       const img = brandAsset("product", it.image, it.image);
       const media = img
-        ? `<img src="${img}" alt="${escapeHtml(tx(it.name))}" loading="lazy" onerror="this.hidden=true; this.nextElementSibling.hidden=false"><div class="product-ph" hidden>${icon("box")}</div>`
+        ? `<img src="${img}" alt="${name}" loading="lazy" onerror="this.hidden=true; this.nextElementSibling.hidden=false"><div class="product-ph" hidden>${icon("box")}</div>`
         : `<div class="product-ph">${icon("box")}</div>`;
       return `<div class="product-card reveal">
           <div class="product-media">${media}</div>
-          <h3>${escapeHtml(tx(it.name))}</h3>
-          ${t(it.desc) ? `<p>${escapeHtml(t(it.desc))}</p>` : ""}
+          <h3>${name}</h3>
+          ${desc}
           ${it.price ? `<span class="price">${escapeHtml(it.price)}</span>` : ""}
         </div>`;
     }).join("");

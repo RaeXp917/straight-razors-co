@@ -77,7 +77,7 @@ const SITE_CONFIG = {
       el: "★ 5.0 με 117 κριτικές στο Google — το κούρεμα που ταξιδεύουν από τη Θεσσαλονίκη για να κάνουν.",
       en: "★ 5.0 with 117 Google reviews — the cut people drive in from Thessaloniki for."
     },
-    ctaText: { el: "Κάλεσέ μας", en: "Call us" }
+    ctaText: { el: "Καλέστε μας", en: "Call us" }
   },
 
   /* --- 8. ABOUT ------------------------------------------------------------ */
@@ -95,13 +95,17 @@ const SITE_CONFIG = {
     enabled: true,
     title: { el: "Υπηρεσίες", en: "Services" },
     // icon = a name from assets/js/icons.js (or an emoji / image path)
+    // Mirrors the ΤΙΜΟΚΑΤΑΛΟΓΟΣ (price list) below, with prices shown on each
+    // card. Keep the two in sync when prices change. (0.00€ = placeholders.)
     items: [
-      { icon: "scissors", name: { el: "Κούρεμα",       en: "Haircut" },       desc: { el: "Άντρες & παιδιά",     en: "Men & kids" },          price: "" },
-      { icon: "razor",    name: { el: "Ξύρισμα",        en: "Shave" },         desc: { el: "Παραδοσιακό ξυράφι",  en: "Traditional razor" },   price: "" },
-      { icon: "comb",     name: { el: "Περιποίηση",     en: "Grooming" },      desc: { el: "Γένια & styling",     en: "Beard & styling" },     price: "" },
-      { icon: "droplet",  name: { el: "Λούσιμο μαλλιών", en: "Hair washing" },  desc: { el: "Πλήρης φροντίδα",     en: "Full care" },           price: "" },
-      { icon: "bottle",   name: { el: "Beard oil",      en: "Beard oil" },     desc: { el: "Προϊόντα περιποίησης", en: "Grooming products" },   price: "" },
-      { icon: "spray",    name: { el: "Hair gel",       en: "Hair gel" },      desc: { el: "Styling προϊόντα",    en: "Styling products" },    price: "" }
+      { icon: "scissors", name: { el: "Κούρεμα Ανδρικό", en: "Men's Haircut" },  price: "0.00€" },
+      { icon: "scissors", name: { el: "Κούρεμα Παιδικό", en: "Kids' Haircut" },  price: "0.00€" },
+      { icon: "razor",    name: { el: "Τριμάρισμα Γενιού με Ξυράφι", en: "Beard Trim with Razor" }, price: "0.00€" },
+      { icon: "spray",    name: { el: "Αποτρίχωση Αυτιά - Μύτη με Κερί", en: "Ear & Nose Waxing" }, price: "0.00€" },
+      { icon: "razor",    name: { el: "Ξύρισμα Αγγλικού Τύπου", en: "English Shave" }, desc: { el: "Παραδοσιακό με Φαλτσέτα", en: "Traditional straight razor" }, price: "15.00€" },
+      { icon: "sparkles", name: { el: "Μάσκα Νεκράς Θάλασσας", en: "Dead Sea Mask" }, desc: { el: "Ενυδάτωση & θρέψη επιδερμίδας", en: "Hydrates & nourishes skin" }, price: "5.00€" },
+      { icon: "droplet",  name: { el: "Το Δεύτερο Λούσιμο", en: "The Second Wash" }, price: "2.00€" },
+      { icon: "star",     name: { el: "Γαμπριάτικο Πακέτο", en: "Groom's Package" }, desc: { el: "Όλο το πακέτο σε 2 ραντεβού", en: "Full package over 2 appointments" }, price: "50.00€" }
     ]
   },
 
@@ -109,13 +113,25 @@ const SITE_CONFIG = {
      Shown below Services. Rename these and drop product-1.jpg … in the brand
      folder to show real photos (missing images → a clean box placeholder).   */
   products: {
-    enabled: false,   // HIDDEN until real product names + photos are provided
-                      // (was showing "Product 1/2/3" placeholders publicly).
+    enabled: true,
     title: { el: "Προϊόντα που χρησιμοποιούμε", en: "Products we use" },
+    // Brands the shop uses. Each shows the brand NAME as a simple wordmark
+    // (not their logo artwork — that keeps it legal/commercial-safe) and links
+    // to the brand's official website. Add a `price`/`image` if you ever want a
+    // specific product card instead.
     items: [
-      { name: { el: "Product 1", en: "Product 1" }, image: "product-1.jpg" },
-      { name: { el: "Product 2", en: "Product 2" }, image: "product-2.jpg" },
-      { name: { el: "Product 3", en: "Product 3" }, image: "product-3.jpg" }
+      { name: { el: "Joker Barber", en: "Joker Barber" },
+        desc: { el: "Ιταλικά προϊόντα styling & ξυρίσματος", en: "Italian styling & shaving products" },
+        url: "https://jokerbarber.com" },
+      { name: { el: "TRINITY Haircare", en: "TRINITY Haircare" },
+        desc: { el: "Επαγγελματική περιποίηση μαλλιών", en: "Professional hair care" },
+        url: "https://trinityhaircare.gr" },
+      { name: { el: "Tailor's Grooming", en: "Tailor's Grooming" },
+        desc: { el: "Ανδρική περιποίηση & styling", en: "Men's grooming & styling" },
+        url: "https://tailorsgrooming.eu" },
+      { name: { el: "Arren Men's Grooming", en: "Arren Men's Grooming" },
+        desc: { el: "Grooming για τον σύγχρονο άντρα", en: "Grooming for the modern man" },
+        url: "https://www.arrenmensgrooming.gr" }
     ]
   },
 

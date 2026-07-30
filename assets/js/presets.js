@@ -25,7 +25,7 @@ const UI_TEXT = {
     nav_reviews:  "Κριτικές",
     nav_contact:  "Επικοινωνία",
     nav_instagram:"Instagram",
-    call:         "Κάλεσέ μας",
+    call:         "Καλέστε μας",
     whatsapp:     "WhatsApp",
     directions:   "Οδηγίες",
     hours:        "Ώρες λειτουργίας",
@@ -41,8 +41,8 @@ const UI_TEXT = {
     before:       "Πριν",
     after:        "Μετά",
     reviews_word: "κριτικές",
-    ig_follow:    "Ακολούθησέ μας στο Instagram",
-    ig_subtitle:  "Δες τις τελευταίες δουλειές & τα stories μας"
+    ig_follow:    "Ακολουθήστε μας στο Instagram",
+    ig_subtitle:  "Δείτε τις τελευταίες δουλειές & τα stories μας"
   },
   en: {
     nav_about:    "About",
@@ -90,7 +90,7 @@ const DEFAULT_LABELS = {
   gallery:      { el: "Ο χώρος μας",        en: "Gallery" },
   testimonials: { el: "Τι λένε οι πελάτες", en: "What clients say" },
   booking:      { el: "Κλείσε το ραντεβού σου", en: "Book your appointment" },
-  instagram:    { el: "Ακολούθησέ μας",     en: "Follow us" },
+  instagram:    { el: "Ακολουθήστε μας",     en: "Follow us" },
   priceList:    { el: "ΤΙΜΟΚΑΤΑΛΟΓΟΣ",       en: "Price list" },
   contact:      { el: "Επικοινωνία",        en: "Contact" }
 };

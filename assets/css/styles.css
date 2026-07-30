@@ -448,6 +448,18 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 .product-card .price { display: inline-block; margin-top: 10px; font-weight: 700; color: var(--accent);
   padding: 4px 12px; border: 1px solid var(--accent); border-radius: var(--radius); }
 
+/* Brand cards — a product item with a `url` (links to the maker's site) */
+a.product-card.brand-card { display: flex; flex-direction: column; text-decoration: none; }
+.brand-media { aspect-ratio: 16 / 10; border-radius: var(--radius); overflow: hidden; margin-bottom: 14px;
+  padding: 18px; background: color-mix(in srgb, var(--wood) 14%, var(--bg)); display: grid; place-items: center; }
+.brand-wordmark { font-family: var(--font); font-weight: 600; font-size: 1.5rem; line-height: 1.15;
+  color: var(--primary); letter-spacing: .01em; text-align: center; }
+.brand-card p { color: var(--muted); font-size: .92rem; margin-bottom: 6px; }
+.brand-site { display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  margin-top: auto; padding-top: 10px; color: var(--accent); font-size: .88rem; font-weight: 600; }
+.brand-site svg.ic { width: 15px; height: 15px; }
+.brand-card:hover .brand-wordmark { color: var(--accent); }
+
 /* ---------- Footer maker credit ---------- */
 .credit { color: var(--muted); font-size: .85rem; display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
 .credit a { color: var(--accent); font-weight: 600; text-decoration: none; }
