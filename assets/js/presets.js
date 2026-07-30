@@ -150,9 +150,10 @@ const BUSINESS_PRESETS = {
   barber: {
     icon: "scissors",
     ctaText: { el: "Κλείσε ραντεβού", en: "Book an appointment" },
-    // "Where you can find us" (contact) and the price list sit right below the
-    // About section, per the client's request; the rest follows after.
-    layout: ["hero", "about", "contact", "priceList", "services", "products", "team", "gallery", "instagram", "testimonials"],
+    // The location block (contact + map + price list, combined & compact) lives
+    // at the very bottom, directly above the footer. "contact" and "priceList"
+    // are intentionally NOT listed — renderLocationInfo pulls in both.
+    layout: ["hero", "about", "services", "products", "team", "gallery", "instagram", "testimonials", "locationInfo"],
     labels: {
       about:    { el: "Σχετικά με εμάς",  en: "About us" },
       products: { el: "Προϊόντα που χρησιμοποιούμε", en: "Products we use" },

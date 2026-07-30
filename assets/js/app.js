@@ -660,17 +660,14 @@
     return sec;
   }
 
-  // Price list (ΤΙΜΟΚΑΤΑΛΟΓΟΣ): the brand logo on the left, the priced list on
-  // the right (dotted leaders). An item with nested `items` becomes a group
-  // heading with indented sub-rows (e.g. an SPA package).
-  function renderPriceList(pl) {
+  // Shared price-list body: dotted-leader rows; a nested `items` becomes a group
+  // heading with indented sub-rows (e.g. the SPA package). Used by the standalone
+  // price section AND the compact bottom location block.
+  function priceRowsMarkup(pl) {
     const items = (pl && pl.items) || [];
-    if (!items.length) return null;
-    const title = sectionLabel("priceList", pl);
-    const logo = brandAsset("logo", (pl && pl.logo) || CFG.brand.logo, "logo.png") || preset.icon;
     const priceCell = (v) => (v ? `<span class="pl-dots"></span><span class="pl-price">${escapeHtml(tx(v))}</span>` : "");
     const line = (it, cls) => `<div class="pl-row${cls ? " " + cls : ""}"><span class="pl-name">${escapeHtml(tx(it.name))}</span>${priceCell(it.price)}</div>`;
-    const blocks = items.map((it) => {
+    return items.map((it) => {
       if (it.items && it.items.length) {
         const note = it.note ? `<div class="pl-note">${escapeHtml(tx(it.note))}</div>` : "";
         return `<div class="pl-group"><div class="pl-row pl-grouphead"><span class="pl-name">${escapeHtml(tx(it.name))}</span>${priceCell(it.price)}</div>` +
@@ -678,12 +675,71 @@
       }
       return line(it);
     }).join("");
+  }
+
+  // Price list (ΤΙΜΟΚΑΤΑΛΟΓΟΣ): brand logo on the left, priced list on the right.
+  // NOTE: for this client it's rendered INSIDE the bottom location block instead
+  // of as its own section (see renderLocationInfo), so it's off the layout.
+  function renderPriceList(pl) {
+    const items = (pl && pl.items) || [];
+    if (!items.length) return null;
+    const title = sectionLabel("priceList", pl);
+    const logo = brandAsset("logo", (pl && pl.logo) || CFG.brand.logo, "logo.png") || preset.icon;
     const inner = `
       <div class="pl-wrap">
         <div class="pl-logo">${iconMarkup(logo, preset.icon)}</div>
-        <div class="pl-list">${blocks}</div>
+        <div class="pl-list">${priceRowsMarkup(pl)}</div>
       </div>`;
     return titledSection("priceList", title, inner, "priceList-section");
+  }
+
+  // Compact bottom "location" block: contact + hours (left) · map (center) ·
+  // price list (right). Lives directly above the footer. Merges what used to be
+  // the standalone contact and price-list sections into one tidy strip.
+  function renderLocationInfo() {
+    const c = CFG.contact || {};
+    const rows = [];
+    if (c.phone) {
+      rows.push(`<li><span class="ci">${icon("phone")}</span><span><span class="cl">${ui("phone")}</span><br>` +
+        `<a class="cv" href="${telHref(c.phone)}">${escapeHtml(c.phone)}</a></span></li>`);
+    }
+    if (c.email) {
+      rows.push(`<li><span class="ci">${icon("mail")}</span><span><span class="cl">${ui("email")}</span><br>` +
+        `<a class="cv" href="mailto:${escapeHtml(c.email)}">${escapeHtml(c.email)}</a></span></li>`);
+    }
+    if (c.address) {
+      rows.push(`<li><span class="ci">${icon("pin")}</span><span><span class="cl">${ui("address")}</span><br>` +
+        `<a class="cv" href="${mapsLink()}" target="_blank" rel="noopener">${escapeHtml(c.address)}</a></span></li>`);
+    }
+    const contactList = rows.length ? `<ul class="contact-list loc-list">${rows.join("")}</ul>` : "";
+
+    let hoursBlock = "";
+    if (CFG.hours && CFG.hours.enabled !== false && CFG.hours.days) {
+      hoursBlock = `<div class="hours loc-hours"><h3>${icon("clock")} ${ui("hours")}</h3>` +
+        CFG.hours.days.map((d) => `<div class="row"><span class="d">${escapeHtml(d[lang] || d.el)}</span><span>${escapeHtml(d.open)}</span></div>`).join("") +
+        `</div>`;
+    }
+
+    const q = encodeURIComponent(c.mapQuery || c.address || "Greece");
+    const mapBlock = `<div class="loc-col loc-map"><iframe title="map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${q}&output=embed"></iframe></div>`;
+
+    const pl = CFG.priceList || {};
+    const priceBlock = (pl.items && pl.items.length)
+      ? `<div class="loc-col loc-prices"><h3 class="loc-prices-title">${escapeHtml(sectionLabel("priceList", pl))}</h3>` +
+        `<div class="pl-list">${priceRowsMarkup(pl)}</div></div>`
+      : "";
+
+    const inner = `<div class="container">
+      <h2 class="section-title loc-title">${escapeHtml(ui("findus"))}</h2>
+      <div class="loc-grid">
+        <div class="loc-col loc-contact">${contactList}${hoursBlock}</div>
+        ${mapBlock}
+        ${priceBlock}
+      </div>
+    </div>`;
+    const sec = el("section", "section location-section", inner);
+    sec.id = "locationInfo";
+    return sec;
   }
 
   /* ---------- registry: section type -> (config key, renderer) ---------- */
@@ -695,7 +751,8 @@
   const SECTION_RENDERERS = {
     hero: renderHero, about: renderAbout, services: renderServices, products: renderProducts, menu: renderMenu,
     plans: renderPlans, portfolio: renderPortfolio, team: renderTeam, gallery: renderGallery,
-    testimonials: renderTestimonials, booking: renderBooking, instagram: renderInstagram, priceList: renderPriceList, contact: renderContact
+    testimonials: renderTestimonials, booking: renderBooking, instagram: renderInstagram, priceList: renderPriceList, contact: renderContact,
+    locationInfo: renderLocationInfo
   };
 
   /* ---------- build all sections from the blueprint ---------- */

@@ -59,8 +59,8 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 .service-card .ico   { color: var(--accent); line-height: 1; }
 .service-card .ico svg.ic { width: 40px; height: 40px; }
 .gallery-item svg.ic { width: 46px; height: 46px; color: var(--muted); }
-.about-badge svg.ic  { width: 46%; height: auto; color: var(--bg); }
-.about-badge img     { width: 60%; }
+.about-badge svg.ic  { width: 60%; height: auto; color: var(--accent); }
+.about-badge img     { width: 78%; max-width: 320px; height: auto; }
 .contact-list .ci    { color: var(--accent); }
 .contact-list .ci svg.ic { width: 22px; height: 22px; }
 .hours h3 svg.ic     { width: 18px; height: 18px; color: var(--accent); vertical-align: -3px; }
@@ -179,9 +179,8 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 .about-text h2 { font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 18px; }
 .about-text p { color: var(--muted); font-size: 1.08rem; }
 .about-badge {
-  display: grid; place-items: center; aspect-ratio: 1; border-radius: var(--radius);
-  background: var(--wood); color: var(--bg);          /* solid cabinetry wood */
-  font-size: 5rem; box-shadow: none; border: 1px solid rgba(0,0,0,.25);
+  display: grid; place-items: center;
+  background: transparent; border: 0; box-shadow: none;   /* no brown box — the black page bg shows through, white logo centered */
 }
 
 /* ---------- Services ---------- */
@@ -320,6 +319,31 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 @media (max-height: 480px) and (orientation: landscape) {
   .hero { min-height: 100vh; }
   .hero-content { padding: 40px 16px; }
+}
+
+/* ---------- Desktop compaction ----------
+   The base sizes are tuned mobile-first, so on wide screens everything reads
+   oversized. Trim section padding, heading-size caps, hero height and grid
+   gaps for a tighter desktop layout (mobile/tablet keep the base sizes). */
+@media (min-width: 900px) {
+  .section { padding: 56px 0; }
+  .section-title { font-size: clamp(1.5rem, 2.4vw, 1.9rem); margin-bottom: 34px; }
+
+  .hero { min-height: 60vh; }
+  .hero-content { padding: 58px 20px; }
+  .hero h1 { font-size: clamp(2.2rem, 4.2vw, 3rem); margin-bottom: 14px; }
+  .hero p { font-size: clamp(1rem, 1.7vw, 1.12rem); margin-bottom: 24px; }
+
+  .about-grid { gap: 40px; }
+  .about-text h2, .contact-info h2 { font-size: clamp(1.5rem, 2.4vw, 1.85rem); }
+  .about-text p { font-size: 1rem; }
+
+  /* tighter card grids */
+  .services-grid, .products-grid, .team-grid, .gallery-grid, .plans-grid { gap: 18px; }
+  /* two portraits shouldn't sprawl across the full row */
+  .team-grid { grid-template-columns: repeat(2, minmax(0, 240px)); justify-content: center; }
+  .car-track .service-card { flex-basis: 260px; padding: 32px 26px; }
+  .booking-band { padding: 34px 38px; }
 }
 
 /* ============================================================================
@@ -600,4 +624,48 @@ a.product-card.brand-card { display: flex; flex-direction: column; text-decorati
   .pl-wrap { flex-direction: column; gap: 24px; }
   .pl-logo { width: 160px; max-width: 55%; }
   .pl-list { width: 100%; }
+}
+
+/* ---------- Bottom location strip: contact · map · price list ------------
+   Compact 3-column block that sits directly above the footer. Merges the old
+   standalone contact + price-list sections. Desktop ≈ 25% / 35% / 40%. */
+.location-section { border-top: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); }
+.loc-title { font-size: clamp(1.3rem, 2.4vw, 1.7rem); margin-bottom: 26px; }
+.loc-grid { display: grid; grid-template-columns: 5fr 7fr 8fr; gap: 24px; align-items: start; }
+.loc-col { min-width: 0; }
+
+/* left column — compact contact details + opening hours */
+.loc-contact .contact-list { gap: 12px; margin-bottom: 16px; }
+.loc-contact .contact-list li { gap: 10px; align-items: flex-start; }
+.loc-contact .contact-list .ci { width: 22px; font-size: 1rem; }
+.loc-contact .contact-list .ci svg.ic { width: 18px; height: 18px; }
+.loc-contact .contact-list .cl { font-size: .72rem; }
+.loc-contact .contact-list .cv { font-size: .92rem; word-break: break-word; }
+.loc-hours { padding: 12px 14px; margin-bottom: 0; }
+.loc-hours h3 { font-size: .98rem; margin-bottom: 8px; }
+.loc-hours .row { padding: 3px 0; font-size: .85rem; }
+
+/* center column — Google map */
+.loc-map iframe { width: 100%; height: 100%; min-height: 400px; border: 0;
+  border-radius: var(--radius); box-shadow: var(--shadow); display: block; }
+
+/* right column — full price list; scrolls only if it can't fit beside the map */
+.loc-prices-title { font-size: 1.05rem; color: var(--accent); font-family: var(--font);
+  letter-spacing: .04em; text-align: center; margin-bottom: 12px; }
+.loc-prices .pl-list { max-height: 430px; overflow: auto; padding-right: 8px; }
+.loc-prices .pl-row { padding: 5px 0; font-size: .9rem; }
+.loc-prices .pl-grouphead { padding-top: 10px; }
+.loc-prices .pl-grouphead .pl-name { font-size: .98rem; }
+.loc-prices .pl-note { font-size: .82rem; padding-top: 2px; }
+
+@media (max-width: 900px) {
+  /* tablet: contact + map side-by-side, price list full width underneath */
+  .loc-grid { grid-template-columns: 1fr 1fr; }
+  .loc-prices { grid-column: 1 / -1; }
+  .loc-prices .pl-list { max-height: none; overflow: visible; }
+}
+@media (max-width: 620px) {
+  /* mobile: stack — contact details, opening hours, map, price list */
+  .loc-grid { grid-template-columns: 1fr; }
+  .loc-map iframe { min-height: 300px; }
 }

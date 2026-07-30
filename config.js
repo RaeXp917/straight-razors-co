@@ -101,7 +101,7 @@ const SITE_CONFIG = {
       { icon: "scissors", name: { el: "Κούρεμα Ανδρικό", en: "Men's Haircut" },  price: "0.00€" },
       { icon: "scissors", name: { el: "Κούρεμα Παιδικό", en: "Kids' Haircut" },  price: "0.00€" },
       { icon: "razor",    name: { el: "Τριμάρισμα Γενιού με Ξυράφι", en: "Beard Trim with Razor" }, price: "0.00€" },
-      { icon: "spray",    name: { el: "Αποτρίχωση Αυτιά - Μύτη με Κερί", en: "Ear & Nose Waxing" }, price: "0.00€" },
+      { icon: "spray",    name: { el: "Αποτρίχωση Αυτιά & Μύτη με Κερί", en: "Ear & Nose Waxing" }, price: "0.00€" },
       { icon: "razor",    name: { el: "Ξύρισμα Αγγλικού Τύπου", en: "English Shave" }, desc: { el: "Παραδοσιακό με Φαλτσέτα", en: "Traditional straight razor" }, price: "15.00€" },
       { icon: "sparkles", name: { el: "Μάσκα Νεκράς Θάλασσας", en: "Dead Sea Mask" }, desc: { el: "Ενυδάτωση & θρέψη επιδερμίδας", en: "Hydrates & nourishes skin" }, price: "5.00€" },
       { icon: "droplet",  name: { el: "Το Δεύτερο Λούσιμο", en: "The Second Wash" }, price: "2.00€" },
@@ -144,7 +144,7 @@ const SITE_CONFIG = {
     title: { el: "Το προσωπικό μας", en: "Our staff" },
     members: [
       { name: { first: { el: "Σάκης", en: "Sakis" }, last: { el: "Πλιάξας", en: "Pliaxas" } },
-        role: { el: "Ιδιοκτήτης – Κουρέας", en: "Owner Barber" },
+        role: { el: "Ιδιοκτήτης Κουρέας", en: "Owner Barber" },
         photo: "assets/img/sakis.png",
         instagram: "https://www.instagram.com/straight_razors_co_2019/" },
       { name: { first: { el: "Τάσος", en: "Tasos" }, last: { el: "Μπουράκου", en: "Mpourakou" } },
@@ -191,8 +191,8 @@ const SITE_CONFIG = {
     //   { author: "Γιώργος", rating: 5,
     //     quote: { el: "Το καλύτερο κούρεμα...", en: "The best haircut..." } }
     items: [],
-    // "See all reviews" button → the shop's real Google Maps page.
-    reviewsPageUrl: "https://maps.app.goo.gl/W4EtoYu93Jstg7mm6"
+    // "See all reviews" button → opens the shop's Google reviews list directly.
+    reviewsPageUrl: "https://www.google.com/maps/place/Straight+razors+Co/@40.2991079,21.796646,17z/data=!4m8!3m7!1s0x1359d359ee378f67:0xd4e10d8dcd44d1e!8m2!3d40.2991079!4d21.796646!9m1!1b1!16s%2Fg%2F11h9k_sf7z"
   },
 
   /* --- 13. SOCIAL LINKS ---------------------------------------------------- */
@@ -258,7 +258,7 @@ const SITE_CONFIG = {
       { name: { el: "Κούρεμα Ανδρικό", en: "Men's Haircut" },              price: "0.00€" },
       { name: { el: "Κούρεμα Παιδικό", en: "Kids' Haircut" },              price: "0.00€" },
       { name: { el: "Τριμάρισμα Γενιού με Ξυράφι", en: "Beard Trim with Razor" }, price: "0.00€" },
-      { name: { el: "Αποτρίχωση Αυτιά - Μύτη με Κερί", en: "Ear & Nose Waxing" }, price: "0.00€" },
+      { name: { el: "Αποτρίχωση Αυτιά & Μύτη με Κερί", en: "Ear & Nose Waxing" }, price: "0.00€" },
       { name: { el: "Ξύρισμα Αγγλικού Τύπου (Παραδοσιακό με Φαλτσέτα)", en: "English Shave (traditional straight razor)" }, price: "15.00€" },
       { name: { el: "Περιποίηση SPA", en: "SPA Treatment" }, items: [
         { name: { el: "Μάσκα Νεκράς Θάλασσας (Ενυδατώνει & Θρέφει την Επιδερμίδα)", en: "Dead Sea Mask (hydrates & nourishes the skin)" }, price: "5.00€" },
