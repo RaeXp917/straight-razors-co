@@ -47,7 +47,7 @@ const UI_TEXT = {
     reviews_less:        "Λιγότερα",
     reviews_filter_note: "Εμφανίζονται οι πιο πρόσφατες αξιολογήσεις με βαθμολογία 4★ ή 5★.",
     reviews_see_all:     "Δείτε όλες τις αξιολογήσεις στο Google",
-    reviews_empty:       "Δεν υπάρχουν διαθέσιμες αξιολογήσεις αυτή τη στιγμή.",
+    reviews_empty:       "Δείτε τι λένε οι πελάτες μας στο Google.",
     ig_follow:    "Ακολουθήστε μας στο Instagram",
     ig_subtitle:  "Δείτε τις τελευταίες δουλειές & τα stories μας"
   },
@@ -85,7 +85,7 @@ const UI_TEXT = {
     reviews_less:        "Less",
     reviews_filter_note: "Showing the most recent reviews rated 4★ or 5★.",
     reviews_see_all:     "See all reviews on Google",
-    reviews_empty:       "No reviews are available right now.",
+    reviews_empty:       "See what our customers say on Google.",
     ig_follow:    "Follow us on Instagram",
     ig_subtitle:  "See our latest work & stories"
   }

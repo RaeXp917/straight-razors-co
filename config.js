@@ -167,21 +167,31 @@ const SITE_CONFIG = {
     ]
   },
 
-  /* --- 12. REVIEWS / TESTIMONIALS (LIVE from Google) -----------------------
-     No hard-coded reviews. Cards + the overall rating/count are pulled at
-     runtime from assets/data/reviews.json, which a scheduled GitHub Action
-     refills every 6 hours from the OFFICIAL Google Business Profile Reviews
-     API (server-side, with secrets — the browser never calls Google directly).
-     Setup steps + required credentials are in README.md → "Google reviews".   */
+  /* --- 12. REVIEWS / TESTIMONIALS -----------------------------------------
+     No API, no login, no fake reviews. Right now this shows the REAL overall
+     Google rating (`summary`) + a button to the shop's Google page.
+
+     To show individual review CARDS, paste real reviews into `items` below
+     (author = the reviewer's first name, quote = their words, rating = stars).
+     They render instantly — no tech setup.
+
+     OPTIONAL / DORMANT: the official Google Business Profile API pipeline is
+     already built (GitHub Action + assets/data/reviews.json). If that cache is
+     ever populated with live reviews it AUTOMATICALLY takes priority over the
+     static content here. Setup steps live in README.md → "Google reviews".    */
   testimonials: {
     enabled: true,
     title:    { el: "Μην μας πιστεύετε — πιστέψτε τους πελάτες μας!",
                 en: "Don't take our word for it — trust our customers!" },
     subtitle: { el: "Αληθινές αξιολογήσεις από πελάτες μας στο Google",
                 en: "Real reviews from our customers on Google" },
-    // "See all reviews" target — the shop's real Google Maps page. Powers the
-    // button under the cards (and the empty-state link) right now. Once the API
-    // is connected, GOOGLE_REVIEWS_PAGE_URL (if set) overrides this per-refresh.
+    // Real Google rating for the shop (matches the 117 reviews on the profile).
+    summary: { rating: "5.0", count: 117 },
+    // Paste real review cards here whenever you have them, e.g.:
+    //   { author: "Γιώργος", rating: 5,
+    //     quote: { el: "Το καλύτερο κούρεμα...", en: "The best haircut..." } }
+    items: [],
+    // "See all reviews" button → the shop's real Google Maps page.
     reviewsPageUrl: "https://maps.app.goo.gl/W4EtoYu93Jstg7mm6"
   },
 

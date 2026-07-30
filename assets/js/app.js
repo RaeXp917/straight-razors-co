@@ -417,18 +417,41 @@
         ${count != null ? `<span class="reviews-count">${escapeHtml(String(count))} ${ui("reviews_word")}</span>` : ""}
       </div>`;
   }
+  // Config review items → the same shape reviewCard() expects for live ones.
+  const normalizeItem = (it) => ({
+    author: tx(it.author) || "",
+    profilePhotoUrl: it.photo ? resolveAsset(it.photo) : "",
+    rating: it.rating != null ? it.rating : 5,
+    comment: tx(it.quote) || tx(it.comment) || "",
+    createTime: it.date || "",
+    updateTime: it.date || ""
+  });
   function loadGoogleReviews(sec, ts) {
     const summaryBox = sec.querySelector(".reviews-summary-slot");
     const grid = sec.querySelector(".reviews-grid");
     const foot = sec.querySelector(".reviews-foot");
     const cfgUrl = tx(ts && ts.reviewsPageUrl) || "";
+    const cfgSummary = ts && ts.summary;
+    const staticItems = (ts && Array.isArray(ts.items) ? ts.items : []).map(normalizeItem).slice(0, 6);
     const seeAll = (url) => `<a class="reviews-all" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${icon("google")}<span>${escapeHtml(ui("reviews_see_all"))}</span></a>`;
-    const showEmpty = (url) => {
-      if (summaryBox) summaryBox.innerHTML = "";
+    const paint = (list, summaryHtml, noteHtml, url) => {
+      if (summaryBox) summaryBox.innerHTML = summaryHtml || "";
       grid.setAttribute("aria-busy", "false");
-      grid.classList.add("is-empty");
-      grid.innerHTML = `<p class="reviews-empty">${escapeHtml(ui("reviews_empty"))}</p>`;
-      foot.innerHTML = seeAll(url || cfgUrl || mapsLink());
+      if (list.length) {
+        grid.classList.remove("is-empty");
+        grid.innerHTML = list.map(reviewCard).join("");
+        wireReviewExpanders(grid);
+      } else {
+        grid.classList.add("is-empty");
+        grid.innerHTML = `<p class="reviews-empty">${escapeHtml(ui("reviews_empty"))}</p>`;
+      }
+      foot.innerHTML = (noteHtml || "") + seeAll(url);
+    };
+    // Static fallback (no live API data): real overall rating + any curated
+    // cards from config. Never invents reviews.
+    const fallbackStatic = (url) => {
+      const summaryHtml = cfgSummary ? renderReviewsSummary(cfgSummary.rating, cfgSummary.count) : "";
+      paint(staticItems, summaryHtml, "", url);
     };
     const ctrl = ("AbortController" in window) ? new AbortController() : null;
     const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, 8000);
@@ -436,17 +459,15 @@
       .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
       .then((data) => {
         const url = (data && data.reviewsPageUrl) || cfgUrl || mapsLink();
-        const list = (data && Array.isArray(data.reviews) ? data.reviews : [])
+        const live = (data && Array.isArray(data.reviews) ? data.reviews : [])
           .filter((r) => clampRating(r.rating) >= 4).slice(0, 6);
-        if (!list.length) return showEmpty(url);
-        if (summaryBox) summaryBox.innerHTML = renderReviewsSummary(data.averageRating, data.totalReviewCount);
-        grid.setAttribute("aria-busy", "false");
-        grid.classList.remove("is-empty");
-        grid.innerHTML = list.map(reviewCard).join("");
-        wireReviewExpanders(grid);
-        foot.innerHTML = `<p class="reviews-note">${escapeHtml(ui("reviews_filter_note"))}</p>${seeAll(url)}`;
+        // Live API data (if the cache is ever populated) takes priority.
+        if (!live.length) return fallbackStatic(url);
+        const summaryHtml = renderReviewsSummary(data.averageRating, data.totalReviewCount);
+        const note = `<p class="reviews-note">${escapeHtml(ui("reviews_filter_note"))}</p>`;
+        paint(live, summaryHtml, note, url);
       })
-      .catch(() => showEmpty(cfgUrl || mapsLink()))
+      .catch(() => fallbackStatic(cfgUrl || mapsLink()))
       .finally(() => clearTimeout(timer));
   }
   function renderTestimonials(ts) {
