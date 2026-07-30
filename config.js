@@ -136,16 +136,22 @@ const SITE_CONFIG = {
   },
 
   /* --- 10. TEAM / EMPLOYEES ------------------------------------------------
-     Staff photos resolve from brand.assetsDir using staff-1.jpg, etc.        */
+     Real staff. Photos use explicit paths in assets/img/ (full paths are used
+     as-is). Tasos' photo is a temporary stand-in until his own PNG arrives —
+     just replace assets/img/tasos.png with the real one, same filename.       */
   team: {
-    enabled: false,   // HIDDEN until real staff names + photos are provided
-                      // (was showing "Όνομα Επίθετο" + silhouette placeholders).
+    enabled: true,
     title: { el: "Το προσωπικό μας", en: "Our staff" },
-    // 👇 Replace names only; matching staff-1.jpg files are loaded automatically.
     members: [
-      { name: { first: "Όνομα", last: "Επίθετο" }, role: { el: "Barber", en: "Barber" }, photo: "staff-1.jpg" },
-      { name: { first: "Όνομα", last: "Επίθετο" }, role: { el: "Barber", en: "Barber" }, photo: "staff-2.jpg" },
-      { name: { first: "Όνομα", last: "Επίθετο" }, role: { el: "Barber", en: "Barber" }, photo: "staff-3.jpg" }
+      { name: { first: "Sakis", last: "Pliaxas" },
+        role: { el: "Ιδιοκτήτης – Κουρέας", en: "Owner Barber" },
+        photo: "assets/img/sakis.png",
+        instagram: "https://www.instagram.com/straight_razors_co_2019/" },
+      { name: { first: "Tasos", last: "Mpourakou" },
+        role: { el: "Κουρέας", en: "Employee Barber" },
+        photo: "assets/img/tasos.png",
+        // Points to the shop profile until Tasos' own Instagram handle is known.
+        instagram: "https://www.instagram.com/straight_razors_co_2019/" }
     ]
   },
 
@@ -216,18 +222,24 @@ const SITE_CONFIG = {
   instagram: {
     enabled:  true,
     handle:   "straight_razors_co_2019",
-    url:      "https://www.instagram.com/straight_razors_co_2019/",
+    url:      "https://www.instagram.com/straight_razors_co_2019/?hl=el",
+    title:    { el: "Οι δουλειές μας στο Instagram", en: "Our work on Instagram" },
+    subtitle: { el: "Δείτε μερικές από τις τελευταίες δουλειές μας",
+                en: "See some of our latest work" },
+    ctaText:  { el: "Δείτε ολόκληρο το προφίλ στο Instagram",
+                en: "See the full profile on Instagram" },
 
-    /* This is an ad / business-card site (customers CALL the shop to book), so
-       Instagram is just a link. The section shows a "Follow on Instagram"
-       button that opens his profile — posts AND stories, all native in the app.
-       No API, no scraping, nothing to maintain.
-
-       OPTIONAL — to also show a few real posts ON the page (still no API, no
-       account setup): paste post/reel links into `posts` (open the post →
-       Share → Copy link). They render via Instagram's official embed. Leave
-       it empty for just the button. */
-    posts: []
+    /* Six real posts rendered ON the page as a gallery, via Instagram's OFFICIAL
+       embed (embed.js). No API, no scraping, no rehosting — just the permalinks.
+       Open a post → Share → Copy link to add/replace any of these. */
+    posts: [
+      "https://www.instagram.com/reel/DRO0BxoCLad/",
+      "https://www.instagram.com/reel/DCpc2yesPtS/",
+      "https://www.instagram.com/p/DQRqzggiC4P/",
+      "https://www.instagram.com/p/ClpAKyjsWm6/",
+      "https://www.instagram.com/p/CgtgxLjsOqc/",
+      "https://www.instagram.com/reel/DNaeJ0kMQ1W/"
+    ]
   },
 
   /* --- 15. PRICE LIST (ΤΙΜΟΚΑΤΑΛΟΓΟΣ) — shown after the store hours ---------

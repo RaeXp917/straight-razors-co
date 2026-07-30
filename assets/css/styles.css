@@ -214,8 +214,15 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
   object-fit: cover; display: block; border: 0; outline: 0;
 }
 /* name plate is the brand "wood/brown" tone; dark brown text keeps it readable */
-.team-card h3 { padding: 16px 18px 20px; font-size: 1.15rem;
+.team-info { padding: 16px 18px 20px; }
+.team-card h3 { font-size: 1.15rem;
   color: color-mix(in srgb, var(--wood) 24%, #000); }
+.team-role { margin-top: 4px; font-size: .92rem; font-weight: 600; letter-spacing: .02em;
+  color: color-mix(in srgb, var(--wood) 42%, #000); }
+.team-ig { display: inline-flex; margin-top: 12px; color: color-mix(in srgb, var(--wood) 30%, #000);
+  transition: transform .2s ease, color .2s ease; }
+.team-ig:hover { transform: translateY(-2px); color: color-mix(in srgb, var(--wood) 55%, #000); }
+.team-ig svg.ic { width: 24px; height: 24px; }
 
 /* ---------- Gallery ---------- */
 .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
@@ -498,11 +505,17 @@ a.product-card.brand-card { display: flex; flex-direction: column; text-decorati
 .ig-card span { font-weight: 600; }
 .ig-cta { text-align: center; margin-top: 28px; }
 .ig-follow svg.ic { width: 20px; height: 20px; }
-/* Official post embeds → a horizontal, scroll-snapping strip of real IG cards. */
-.ig-posts { display: flex; gap: 18px; overflow-x: auto; padding: 4px 2px 16px;
-  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; justify-content: flex-start; }
-.ig-posts .instagram-media { flex: 0 0 auto; scroll-snap-align: center; margin: 0 !important; }
-@media (min-width: 720px) { .ig-posts { justify-content: center; } }
+/* Official post embeds → a large responsive gallery: 3 cols desktop, 2 tablet,
+   1 mobile. Each cell centers its embed (max 540px, per Instagram). We only
+   size/center the outer blockquote wrapper — never the embed's inner content. */
+.ig-posts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px; align-items: start; justify-items: center;
+  max-width: 1720px; margin: 0 auto; padding: 4px 0 8px; }
+.ig-posts .instagram-media {
+  margin: 0 auto !important; width: 100% !important;
+  max-width: 540px !important; min-width: 0 !important; }
+@media (max-width: 1040px) { .ig-posts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; } }
+@media (max-width: 680px)  { .ig-posts { grid-template-columns: 1fr; gap: 24px; } }
 /* Automated JSON feed → a responsive grid of post thumbnails linking to IG. */
 .ig-feed { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 12px; max-width: 900px; margin: 0 auto; }

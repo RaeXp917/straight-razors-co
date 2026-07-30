@@ -291,8 +291,13 @@
       const src = brandAsset("team", m.photo, `staff-${index + 1}.jpg`) || SAMPLE;
       // If the real photo is missing, fall back to the sample portrait.
       const photo = `<img class="team-photo" src="${src}" alt="${escapeHtml(name)}" onerror="this.onerror=null; this.src='${SAMPLE}'">`;
-      // Card = picture + name only.
-      return `<div class="team-card reveal">${photo}<h3>${personNameMarkup(m.name)}</h3></div>`;
+      // Card = picture + name + role (owner / employee, etc.) + optional IG link.
+      const role = t(m.role);
+      const igUrl = m.instagram || (m.social && m.social.instagram) || "";
+      const igLink = igUrl
+        ? `<a class="team-ig" href="${escapeHtml(igUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Instagram">${icon("instagram")}</a>`
+        : "";
+      return `<div class="team-card reveal">${photo}<div class="team-info"><h3>${personNameMarkup(m.name)}</h3>${role ? `<p class="team-role">${escapeHtml(role)}</p>` : ""}${igLink}</div></div>`;
     }).join("");
     return titledSection("team", title, `<div class="team-grid">${cards}</div>`);
   }
@@ -494,8 +499,9 @@
     const title = sectionLabel("instagram", ig);
     const at = handle ? "@" + handle : "";
     const sub = t(ig.subtitle) || ui("ig_subtitle");
+    const followText = t(ig.ctaText) || ui("ig_follow");
     const follow = url
-      ? `<a class="btn btn-accent ig-follow" href="${url}" target="_blank" rel="noopener">${icon("instagram")}<span>${escapeHtml(ui("ig_follow"))}</span></a>`
+      ? `<a class="btn btn-accent ig-follow" href="${url}" target="_blank" rel="noopener noreferrer">${icon("instagram")}<span>${escapeHtml(followText)}</span></a>`
       : "";
     // Feed priority: widget snippet (auto grid) → auto JSON feed (scraper proxy,
     // renders on load) → official post embeds (posts you list) → a CTA card. The
@@ -506,8 +512,11 @@
     } else if (feedUrl) {
       feed = `<div class="ig-feed" aria-live="polite"><div class="ig-loading">${icon("instagram")}<span>…</span></div></div>`;
     } else if (posts.length) {
-      const cards = posts.map((permalink) =>
-        `<blockquote class="instagram-media" data-instgrm-permalink="${escapeHtml(permalink)}" data-instgrm-version="14"></blockquote>`).join("");
+      const cards = posts.map((permalink) => {
+        const sep = permalink.includes("?") ? "&amp;" : "?";
+        const link = `${escapeHtml(permalink)}${sep}utm_source=ig_embed&amp;utm_campaign=loading`;
+        return `<blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="${link}" data-instgrm-version="14"></blockquote>`;
+      }).join("");
       feed = `<div class="ig-posts">${cards}</div>`;
     } else {
       feed = url ? `<a class="ig-card" href="${url}" target="_blank" rel="noopener">${icon("instagram")}${at ? `<span>${escapeHtml(at)}</span>` : ""}</a>` : "";

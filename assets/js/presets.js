@@ -136,7 +136,9 @@ const BUSINESS_PRESETS = {
   barber: {
     icon: "scissors",
     ctaText: { el: "Κλείσε ραντεβού", en: "Book an appointment" },
-    layout: ["hero", "about", "services", "products", "team", "gallery", "instagram", "testimonials", "contact", "priceList"],
+    // "Where you can find us" (contact) and the price list sit right below the
+    // About section, per the client's request; the rest follows after.
+    layout: ["hero", "about", "contact", "priceList", "services", "products", "team", "gallery", "instagram", "testimonials"],
     labels: {
       about:    { el: "Σχετικά με εμάς",  en: "About us" },
       products: { el: "Προϊόντα που χρησιμοποιούμε", en: "Products we use" },
