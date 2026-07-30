@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loading…</title>
+  <meta name="description" content="" />
+  <link rel="icon" id="favicon" href="data:," />
+
+  <!-- Font (single request; swap in config via theme.font if you self-host) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+
+  <!-- ===================== HEADER / NAV (universal chrome) ===================== -->
+  <header class="site-header" id="header">
+    <div class="container nav-inner">
+      <a href="#" class="brand" id="brand"></a>
+
+      <nav class="nav" id="nav"></nav>
+
+      <div class="nav-actions">
+        <div class="lang-switch" id="langSwitch"></div>
+        <a class="btn btn-accent btn-call" id="navCall" href="#">📞</a>
+        <button class="burger" id="burger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== DYNAMIC SECTIONS =====================
+       The engine (assets/js/app.js) reads the blueprint for the current
+       businessType and builds every section into this single mount point,
+       in the order the blueprint defines. Nothing below is hard-coded. -->
+  <main id="app"></main>
+
+  <!-- ===================== FOOTER (universal chrome) ===================== -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand" id="footerBrand"></div>
+      <div class="social" id="social"></div>
+      <p class="copyright" id="copyright"></p>
+      <p class="credit" id="credit"></p>
+    </div>
+  </footer>
+
+  <!-- Floating call button (mobile) -->
+  <a class="fab" id="fab" href="#">📞</a>
+
+  <!-- Scripts: config FIRST, then engine. -->
+  <script src="config.js"></script>
+  <script src="assets/js/icons.js"></script>
+  <script src="assets/js/presets.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

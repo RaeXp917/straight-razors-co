@@ -1,0 +1,488 @@
+/* ============================================================================
+   STYLES  —  engine file. Colors/fonts come from config.js via CSS variables,
+   so you normally never edit this file.
+   ============================================================================ */
+
+:root {
+  --primary: #111827;
+  --accent:  #c9a24b;
+  --accent2: #8a6d2f;
+  --emerald: #1F3A2E;   /* NEW — mirror-wall green, one signature accent */
+  --wood:    #B08D5B;   /* NEW — cabinetry tone, dividers / about badge   */
+  --bg:      #ffffff;
+  --surface: #f7f5f0;
+  --font:    'Fraunces', 'Poppins', serif;  /* DISPLAY face — headings only */
+  --body:    'Poppins', system-ui, sans-serif;
+  --radius:  4px;
+  --text:    #1f2430;
+  --muted:   #6b7280;
+  --line:    rgba(0,0,0,.08);
+  --shadow:  0 10px 30px rgba(0,0,0,.08);
+  --header-height: 84px;
+}
+
+/* dark theme (set theme.dark:true in config) */
+body.dark {
+  --bg: #0f1117; --surface: #171a22; --text: #e8eaf0; --muted: #9aa2b1;
+  --primary: #ffffff; --line: rgba(255,255,255,.12);
+  --shadow: 0 10px 30px rgba(0,0,0,.5);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--body);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.container { width: 100%; max-width: 1150px; margin: 0 auto; padding: 0 20px; }
+
+/* Serif display face for headings only — the sans/serif contrast is what
+   breaks the generic-template feel. */
+h1, h2, h3 { color: var(--primary); line-height: 1.15; font-weight: 600;
+  font-family: var(--font); letter-spacing: -0.01em; }
+.brand span, .footer-brand span { font-family: var(--font); font-weight: 600; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+/* ---------- Inline SVG icons (stroke inherits `color`) ---------- */
+svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middle; flex: none; }
+.brand svg.ic        { width: 28px; height: 28px; color: var(--accent); }
+.footer-brand svg.ic { width: 30px; height: 30px; color: var(--accent); }
+.btn svg.ic          { width: 18px; height: 18px; }
+.btn-call svg.ic     { width: 20px; height: 20px; }
+.service-card .ico   { color: var(--accent); line-height: 1; }
+.service-card .ico svg.ic { width: 40px; height: 40px; }
+.gallery-item svg.ic { width: 46px; height: 46px; color: var(--muted); }
+.about-badge svg.ic  { width: 46%; height: auto; color: var(--bg); }
+.about-badge img     { width: 60%; }
+.contact-list .ci    { color: var(--accent); }
+.contact-list .ci svg.ic { width: 22px; height: 22px; }
+.hours h3 svg.ic     { width: 18px; height: 18px; color: var(--accent); vertical-align: -3px; }
+.social a svg.ic     { width: 20px; height: 20px; }
+.fab svg.ic          { width: 24px; height: 24px; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 26px; border-radius: var(--radius); font-weight: 600;
+  font-family: inherit; font-size: 15px; cursor: pointer; border: none;
+  letter-spacing: .02em;
+  transition: transform .15s ease, box-shadow .15s ease, background .2s ease, border-color .2s ease;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-accent { background: var(--accent); color: #0B0B0C; box-shadow: 0 6px 18px rgba(0,0,0,.35); }
+.btn-accent:hover { background: var(--accent2); color: #0B0B0C; }
+/* SIGNATURE: the one emerald moment — Directions outline button */
+.btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--emerald); }
+.btn-outline:hover { background: var(--emerald); color: var(--primary); border-color: var(--emerald); }
+.btn-ghost { background: var(--surface); color: var(--text); border: 1px solid var(--line); }
+
+/* ---------- Header ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: var(--header-height); gap: 16px; }
+.brand { display: flex; align-items: center; flex: 0 0 auto; gap: 10px; font-weight: 700; font-size: 20px; color: var(--primary); }
+.brand .logo-emoji { font-size: 26px; }
+.brand img { height: 72px; width: auto; object-fit: contain; }
+/* Brand artwork stays clean and flat; effects belong in the source asset only. */
+.brand img, .footer-brand img {
+  filter: none;
+}
+.nav { display: flex; gap: 26px; }
+.nav a { font-weight: 500; color: var(--text); font-size: 15px; position: relative; }
+.nav a::after {
+  content: ""; position: absolute; left: 0; bottom: -6px; height: 2px; width: 0;
+  background: var(--accent); transition: width .2s ease;
+}
+.nav a:hover::after { width: 100%; }
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+.btn-call { padding: 10px 16px; }
+
+.lang-switch { display: flex; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.lang-switch button {
+  border: none; background: transparent; padding: 6px 12px; cursor: pointer;
+  font-family: inherit; font-weight: 600; font-size: 13px; color: var(--muted);
+}
+.lang-switch button.active { background: var(--accent); color: #fff; }
+
+.burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; }
+.burger span { width: 24px; height: 2px; background: var(--primary); transition: .3s; }
+
+/* ---------- Hero ---------- */
+/* Solid black base + a faint diagonal gold marble-vein inlay (no gradient).
+   When a hero image is set, JS overrides background-image and the vein hides. */
+.hero {
+  position: relative; min-height: 78vh; display: flex; align-items: center;
+  background-color: var(--bg);
+  background-image:
+    repeating-linear-gradient(135deg, transparent 0 46px,
+      color-mix(in srgb, var(--accent) 55%, transparent) 46px 46.6px, transparent 46.6px 47px),
+    repeating-linear-gradient(135deg, transparent 0 140px,
+      color-mix(in srgb, var(--accent) 22%, transparent) 140px 141px);
+  background-size: cover; background-position: center;
+  color: var(--primary); text-align: center;
+}
+.hero-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
+.hero.no-image .hero-overlay { background: transparent; }
+/* faint gold hairline top & bottom, like the marble inlay strip */
+.hero::before, .hero::after {
+  content: ""; position: absolute; left: 0; right: 0; height: 1px; z-index: 2;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: .5;
+}
+.hero::before { top: 0; } .hero::after { bottom: 0; }
+.hero-content { position: relative; z-index: 3; padding: 80px 20px; margin: 0 auto; max-width: 800px; }
+.hero h1 { color: var(--primary); font-size: clamp(2.2rem, 6vw, 4rem); margin-bottom: 18px; }
+.hero p { font-size: clamp(1rem, 2.4vw, 1.3rem); opacity: .95; margin-bottom: 30px; }
+.hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+/* ---------- Sections ---------- */
+.section { padding: 84px 0; }
+.section-alt { background: var(--surface);
+  border-top: 1px solid color-mix(in srgb, var(--wood) 40%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--wood) 40%, transparent); }
+.section-title { text-align: center; font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 48px; position: relative; }
+/* double offset gold hairlines — marble-vein, not a solid bar */
+.section-title::after {
+  content: ""; display: block; width: 66px; height: 5px; margin: 16px auto 0;
+  background:
+    linear-gradient(var(--accent), var(--accent)) center top / 100% 1px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) center bottom / 58% 1px no-repeat;
+}
+
+/* reveal on scroll — elements rise + pop in as they enter the viewport.
+   --reveal-delay is set per-card by app.js so grids appear one after another. */
+.reveal {
+  opacity: 0; transform: translateY(30px) scale(.96);
+  transition: opacity .9s ease, transform .9s cubic-bezier(.22,.68,.28,1.15);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal.in { opacity: 1; transform: none; }
+/* accessibility: users who prefer reduced motion see everything instantly */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------- About ---------- */
+.about-grid { display: grid; grid-template-columns: 1.4fr .9fr; gap: 48px; align-items: center; }
+.about-text h2 { font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 18px; }
+.about-text p { color: var(--muted); font-size: 1.08rem; }
+.about-badge {
+  display: grid; place-items: center; aspect-ratio: 1; border-radius: var(--radius);
+  background: var(--wood); color: var(--bg);          /* solid cabinetry wood */
+  font-size: 5rem; box-shadow: none; border: 1px solid rgba(0,0,0,.25);
+}
+
+/* ---------- Services ---------- */
+.services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 22px; }
+.service-card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-top: 2px solid var(--accent);                 /* gold-vein inlay strip */
+  border-radius: var(--radius); padding: 30px 24px; text-align: center;
+  box-shadow: none; transition: transform .2s ease, border-color .2s ease;
+}
+.service-card:hover { transform: translateY(-6px); border-top-color: var(--primary); }
+.service-card .ico { font-size: 2.6rem; margin-bottom: 14px; }
+.service-card h3 { font-size: 1.2rem; margin-bottom: 8px; }
+.service-card p { color: var(--muted); font-size: .95rem; margin-bottom: 12px; }
+.service-card .price { display: inline-block; font-weight: 700; color: var(--accent); background: transparent; padding: 4px 12px; border: 1px solid var(--accent); border-radius: var(--radius); }
+
+/* ---------- Team ---------- */
+.team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 26px; }
+.team-card {
+  text-align: center; background: var(--wood); border: 1px solid var(--line);
+  border-top: 2px solid var(--accent);                 /* matching gold-vein strip */
+  border-radius: var(--radius); padding: 0; overflow: hidden; box-shadow: none;
+  transition: transform .2s ease, border-color .2s ease;
+}
+.team-card:hover { transform: translateY(-6px); border-top-color: var(--primary); }
+/* portrait = the photo only, no coloured/placeholder box behind it.
+   4:5 = a vertical portrait frame (taller than wide). */
+.team-photo {
+  width: 100%; height: auto; aspect-ratio: 4 / 5; margin: 0;
+  object-fit: cover; display: block; border: 0; outline: 0;
+}
+/* name plate is the brand "wood/brown" tone; dark brown text keeps it readable */
+.team-card h3 { padding: 16px 18px 20px; font-size: 1.15rem;
+  color: color-mix(in srgb, var(--wood) 24%, #000); }
+
+/* ---------- Gallery ---------- */
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.gallery-item {
+  aspect-ratio: 4/3; border-radius: var(--radius); overflow: hidden; background: var(--surface);
+  display: grid; place-items: center; color: var(--muted); font-size: 2.4rem;
+  box-shadow: var(--shadow); transition: transform .25s ease;
+}
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-item:hover { transform: scale(1.02); }
+
+/* ---------- Contact ---------- */
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: start; }
+.contact-info h2 { font-size: clamp(1.6rem, 4vw, 2.3rem); margin-bottom: 24px; }
+.contact-list { list-style: none; display: flex; flex-direction: column; gap: 16px; margin-bottom: 26px; }
+.contact-list li { display: flex; gap: 14px; align-items: flex-start; }
+.contact-list .ci { font-size: 1.4rem; width: 30px; }
+.contact-list .cl { font-size: .8rem; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
+.contact-list .cv { font-weight: 600; }
+.hours { background: var(--surface); border-radius: var(--radius); padding: 20px 22px; margin-bottom: 24px; border: 1px solid var(--line); }
+.hours h3 { font-size: 1.1rem; margin-bottom: 12px; }
+.hours .row { display: flex; justify-content: space-between; padding: 5px 0; font-size: .95rem; border-bottom: 1px dashed var(--line); }
+.hours .row:last-child { border-bottom: none; }
+.hours .row .d { color: var(--muted); }
+.contact-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.contact-btns .btn-ghost { color: var(--text); }
+.contact-map iframe { width: 100%; height: 100%; min-height: 420px; border: 0; border-radius: var(--radius); box-shadow: var(--shadow); }
+
+/* ---------- Footer ---------- */
+.site-footer { background: var(--surface); color: var(--primary); padding: 48px 0;
+  border-top: 2px solid var(--accent); }   /* gold-vein cap */
+.footer-inner { display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; }
+.footer-brand { font-size: 1.5rem; display: flex; align-items: center; gap: 10px; color: var(--primary); }
+.footer-brand img { height: 132px; width: auto; object-fit: contain; }
+.social { display: flex; gap: 14px; }
+.social a {
+  width: 42px; height: 42px; border-radius: var(--radius); display: grid; place-items: center;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  transition: background .2s, transform .2s, color .2s;
+}
+.social a:hover { background: var(--accent); color: #0B0B0C; transform: translateY(-3px); }
+.copyright { color: var(--muted); font-size: .9rem; }
+
+/* ---------- Floating action button (mobile) ---------- */
+.fab {
+  position: fixed; right: 18px; bottom: 18px; z-index: 60;
+  width: 56px; height: 56px; border-radius: 50%; display: none;
+  place-items: center; font-size: 1.5rem; color: #fff;
+  background: var(--accent); box-shadow: 0 8px 24px rgba(0,0,0,.3);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .nav {
+    position: fixed; inset: var(--header-height) 0 auto 0; flex-direction: column; gap: 0;
+    background: var(--bg); border-bottom: 1px solid var(--line);
+    transform: translateY(-120%); transition: transform .3s ease; padding: 8px 0;
+  }
+  .nav.open { transform: none; }
+  .nav a { padding: 14px 24px; border-bottom: 1px solid var(--line); }
+  .nav a::after { display: none; }
+  .burger { display: flex; }
+  .btn-call { display: none; }
+  .about-grid, .contact-grid { grid-template-columns: 1fr; }
+  .about-badge { max-width: 260px; margin: 0 auto; }
+  .fab { display: grid; }
+}
+
+/* Phones (iPhone / Android) — tighten spacing, stack CTAs, shrink media */
+@media (max-width: 560px) {
+  :root { --header-height: 70px; }
+  .container { padding: 0 16px; }
+  .section { padding: 56px 0; }
+  .section-title { margin-bottom: 34px; }
+  .hero { min-height: 66vh; }
+  .hero-content { padding: 56px 16px; }
+  .hero-cta { flex-direction: column; align-items: stretch; }
+  .hero-cta .btn { justify-content: center; }
+  .brand { font-size: 17px; }
+  .brand img { height: 58px; }
+  .footer-brand img { height: 112px; }
+  .service-card { padding: 26px 20px; }
+  .contact-map iframe { min-height: 320px; }
+  .hours .row { gap: 16px; }
+  .hours .row span:last-child { text-align: right; }
+}
+
+@media (max-width: 360px) {
+  .lang-switch button { padding-inline: 9px; }
+  .nav-actions { gap: 7px; }
+  .brand img { height: 52px; }
+}
+
+/* Landscape phones / very short viewports — keep hero from eating the screen */
+@media (max-height: 480px) and (orientation: landscape) {
+  .hero { min-height: 100vh; }
+  .hero-content { padding: 40px 16px; }
+}
+
+/* ============================================================================
+   DYNAMIC SECTION TYPES  —  styles for the blueprint-driven sections
+   (menu, pricing plans, portfolio / before-after, reviews, booking band).
+   These only appear when a business type's blueprint includes them.
+   ============================================================================ */
+
+/* ---------- Menu (fast food / restaurant / café) ---------- */
+.menu-wrap { display: grid; gap: 40px; max-width: 820px; margin: 0 auto; }
+.menu-cat-title {
+  font-size: 1.35rem; margin-bottom: 18px; color: var(--accent);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  padding-bottom: 8px;
+}
+.menu-list { display: grid; gap: 16px; }
+.menu-item-main { display: flex; align-items: baseline; gap: 8px; }
+.menu-item-name { font-weight: 600; font-family: var(--font); font-size: 1.08rem; color: var(--primary); white-space: nowrap; }
+.menu-dots { flex: 1; border-bottom: 2px dotted color-mix(in srgb, var(--muted) 55%, transparent); transform: translateY(-4px); }
+.menu-item-price { font-weight: 700; color: var(--accent); white-space: nowrap; }
+.menu-item-desc { color: var(--muted); font-size: .95rem; margin-top: 2px; }
+
+/* ---------- Pricing plans / packages (gym memberships) ---------- */
+.plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 22px; align-items: stretch; }
+.plan-card {
+  background: var(--surface); border: 1px solid var(--line); border-top: 2px solid var(--accent);
+  border-radius: var(--radius); padding: 32px 26px; display: flex; flex-direction: column; gap: 16px;
+  transition: transform .2s ease, border-color .2s ease;
+}
+.plan-card:hover { transform: translateY(-6px); }
+.plan-card.featured { border: 2px solid var(--accent); box-shadow: var(--shadow); transform: translateY(-6px); }
+.plan-name { font-size: 1.3rem; }
+.plan-price { font-size: 2.2rem; font-weight: 700; color: var(--accent); font-family: var(--font); line-height: 1; }
+.plan-period { font-size: .95rem; color: var(--muted); font-weight: 500; font-family: var(--body); }
+.plan-features { list-style: none; display: grid; gap: 10px; margin: 4px 0; flex: 1; }
+.plan-features li { display: flex; gap: 10px; align-items: flex-start; color: var(--text); font-size: .96rem; }
+.plan-features li svg.ic { width: 18px; height: 18px; color: var(--accent); flex: none; margin-top: 3px; }
+.plan-cta { justify-content: center; margin-top: auto; }
+
+/* ---------- Portfolio: showcase grid + before/after (beauty salons) ---------- */
+.portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.portfolio-item { aspect-ratio: 3/4; border-radius: var(--radius); overflow: hidden; background: var(--surface); box-shadow: var(--shadow); transition: transform .25s ease; }
+.portfolio-item:hover { transform: scale(1.02); }
+.portfolio-item img { width: 100%; height: 100%; object-fit: cover; }
+.portfolio-item.empty { display: none; }
+
+.ba-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.ba-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }
+.ba-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ba-pair figure { position: relative; margin: 0; aspect-ratio: 1; border-radius: var(--radius); overflow: hidden; }
+.ba-pair img { width: 100%; height: 100%; object-fit: cover; }
+.ba-pair figcaption {
+  position: absolute; left: 8px; bottom: 8px; font-size: .72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em; padding: 4px 10px; border-radius: 999px;
+  background: color-mix(in srgb, var(--bg) 82%, transparent); color: var(--accent); backdrop-filter: blur(4px);
+}
+.ba-label { text-align: center; color: var(--muted); font-size: .95rem; margin-top: 12px; }
+
+/* ---------- Reviews / testimonials ---------- */
+.reviews-summary { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin: -20px 0 40px; }
+.reviews-score { font-size: 2.6rem; font-weight: 700; color: var(--accent); font-family: var(--font); line-height: 1; }
+.reviews-count { color: var(--muted); font-size: .95rem; }
+.reviews-stars, .review-stars { display: inline-flex; gap: 2px; }
+.star svg.ic { width: 20px; height: 20px; color: color-mix(in srgb, var(--muted) 45%, transparent); }
+.star.on svg.ic { color: var(--accent); fill: var(--accent); }
+.reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.review-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.review-quote { color: var(--text); font-size: 1.02rem; font-style: italic; flex: 1; }
+.review-author { font-weight: 700; color: var(--primary); font-style: normal; }
+.review-author span { display: block; font-weight: 500; color: var(--muted); font-size: .88rem; }
+
+/* ---------- Booking band (salon / beauty) ---------- */
+.booking-section { background: var(--surface);
+  border-top: 1px solid color-mix(in srgb, var(--wood) 40%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--wood) 40%, transparent); }
+.booking-band {
+  display: flex; align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap;
+  background: var(--emerald, var(--accent2)); color: var(--primary);
+  border-radius: var(--radius); padding: 40px 44px; box-shadow: var(--shadow);
+  background-image: linear-gradient(120deg, color-mix(in srgb, var(--accent) 20%, transparent), transparent);
+}
+.booking-copy h2 { color: var(--primary); font-size: clamp(1.5rem, 3.5vw, 2.1rem); margin-bottom: 6px; }
+.booking-copy p { color: color-mix(in srgb, var(--primary) 82%, transparent); max-width: 46ch; }
+.booking-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+@media (max-width: 560px) {
+  .ba-pair { grid-template-columns: 1fr 1fr; }
+  .booking-band { padding: 30px 22px; }
+  .plan-card { padding: 28px 22px; }
+}
+
+/* ---------- Services carousel (bigger cards, slow auto-scroll + arrows) ---------- */
+.carousel { display: flex; align-items: center; gap: 12px; }
+.car-viewport { flex: 1; min-width: 0; overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: none; -ms-overflow-style: none; }
+/* NOTE: no `scroll-behavior: smooth` here — it fights the per-frame auto-scroll
+   and stalls it. Arrow clicks pass behavior:"smooth" explicitly instead. */
+.car-viewport::-webkit-scrollbar { display: none; }
+.car-track { display: flex; gap: 22px; padding: 10px 4px 18px; }
+/* bigger cards, fixed width so they scroll horizontally instead of wrapping */
+.car-track .service-card { flex: 0 0 300px; padding: 40px 30px; }
+.car-track .service-card .ico svg.ic { width: 48px; height: 48px; }
+.car-track .service-card h3 { font-size: 1.32rem; }
+.car-arrow {
+  flex: none; width: 46px; height: 46px; border-radius: 50%; cursor: pointer;
+  display: grid; place-items: center; color: var(--primary);
+  background: var(--surface); border: 1px solid var(--line);
+  transition: background .2s ease, color .2s ease, transform .15s ease;
+}
+.car-arrow:hover { background: var(--accent); color: #0B0B0C; transform: translateY(-2px); }
+.car-arrow svg.ic { width: 22px; height: 22px; }
+@media (max-width: 560px) {
+  .car-track .service-card { flex: 0 0 78%; padding: 30px 24px; }
+  .car-arrow { width: 40px; height: 40px; }
+}
+
+/* ---------- Products (grid below services) ---------- */
+.products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 22px; }
+.product-card {
+  background: var(--surface); border: 1px solid var(--line); border-top: 2px solid var(--accent);
+  border-radius: var(--radius); padding: 22px 20px 26px; text-align: center;
+  transition: transform .2s ease, border-color .2s ease;
+}
+.product-card:hover { transform: translateY(-6px); border-top-color: var(--primary); }
+.product-media {
+  aspect-ratio: 1; border-radius: var(--radius); overflow: hidden; margin-bottom: 16px;
+  background: color-mix(in srgb, var(--wood) 22%, var(--bg)); display: grid; place-items: center;
+}
+.product-media img { width: 100%; height: 100%; object-fit: cover; }
+.product-ph svg.ic { width: 44px; height: 44px; color: var(--muted); }
+.product-card h3 { font-size: 1.12rem; margin-bottom: 6px; }
+.product-card p { color: var(--muted); font-size: .92rem; }
+.product-card .price { display: inline-block; margin-top: 10px; font-weight: 700; color: var(--accent);
+  padding: 4px 12px; border: 1px solid var(--accent); border-radius: var(--radius); }
+
+/* ---------- Footer maker credit ---------- */
+.credit { color: var(--muted); font-size: .85rem; display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.credit a { color: var(--accent); font-weight: 600; text-decoration: none; }
+.credit a:hover { text-decoration: underline; }
+.credit svg.ic { width: 16px; height: 16px; vertical-align: -3px; }
+.credit-heart svg.ic { color: #e63946; fill: #e63946; }         /* always red */
+.credit-coffee svg.ic { color: var(--muted); }
+
+/* ---------- Lightbox (click any picture to view it large) ---------- */
+.pic-zoom { cursor: zoom-in; }
+.lightbox { position: fixed; inset: 0; z-index: 200; display: none; place-items: center;
+  background: rgba(0,0,0,.88); padding: 30px; }
+.lightbox.open { display: grid; animation: lb-fade .2s ease; }
+@keyframes lb-fade { from { opacity: 0; } to { opacity: 1; } }
+.lightbox img { max-width: 92vw; max-height: 88vh; width: auto; height: auto;
+  border-radius: var(--radius); box-shadow: 0 24px 70px rgba(0,0,0,.6); }
+.lightbox-close { position: absolute; top: 14px; right: 20px; width: 46px; height: 46px;
+  background: rgba(0,0,0,.4); border: 0; color: #fff; font-size: 2rem; line-height: 1;
+  border-radius: 50%; cursor: pointer; }
+.lightbox-close:hover { background: rgba(255,255,255,.2); }
+
+/* ---------- Instagram section (live feed grid + follow button) ---------- */
+.instagram-section .ig-head { text-align: center; margin-bottom: 26px; }
+.ig-handle { font-weight: 700; color: var(--accent); font-size: 1.1rem; letter-spacing: .2px; }
+.ig-sub { color: var(--muted); margin-top: 4px; }
+/* The provider's widget (iframe or custom element) fills this responsive box. */
+.ig-embed { max-width: 720px; margin: 0 auto; }
+.ig-embed iframe { width: 100% !important; border: 0; border-radius: var(--radius); display: block; }
+/* Fallback card shown until a widget snippet is added — links to the profile. */
+.ig-card { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  max-width: 420px; margin: 0 auto; padding: 40px 24px; text-decoration: none;
+  color: var(--primary); border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: var(--radius); background: var(--surface); transition: transform .2s ease, border-color .2s ease; }
+.ig-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+.ig-card svg.ic { width: 46px; height: 46px; color: var(--accent); }
+.ig-card span { font-weight: 600; }
+.ig-cta { text-align: center; margin-top: 28px; }
+.ig-follow svg.ic { width: 20px; height: 20px; }
