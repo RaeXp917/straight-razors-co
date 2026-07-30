@@ -13,6 +13,7 @@ const SITE_CONFIG = {
   /* --- 2. LANGUAGE --------------------------------------------------------- */
   defaultLang: "el",
   showSwitcher: true,
+  showNav: false,   // hide the top nav menu (links + ☰) — short one-scroll ad site
 
   /* --- 3. BRAND ------------------------------------------------------------ */
   brand: {
@@ -211,5 +212,27 @@ const SITE_CONFIG = {
        Share → Copy link). They render via Instagram's official embed. Leave
        it empty for just the button. */
     posts: []
+  },
+
+  /* --- 15. PRICE LIST (ΤΙΜΟΚΑΤΑΛΟΓΟΣ) — shown after the store hours ---------
+     Brand logo on the left, the priced list on the right. Prices are free text
+     ("15.00€", "από 10€", …). An item with a nested `items:[]` becomes a group
+     heading with indented sub-rows (e.g. the SPA package). The 0.00€ values are
+     placeholders from your example — replace with the real prices anytime.    */
+  priceList: {
+    enabled: true,
+    title: { el: "ΤΙΜΟΚΑΤΑΛΟΓΟΣ", en: "PRICE LIST" },
+    logo: "logo.png",   // resolved from brand.assetsDir (the crest already in use)
+    items: [
+      { name: { el: "Κούρεμα Ανδρικό", en: "Men's Haircut" },              price: "0.00€" },
+      { name: { el: "Κούρεμα Παιδικό", en: "Kids' Haircut" },              price: "0.00€" },
+      { name: { el: "Τριμάρισμα Γενιού με Ξυράφι", en: "Beard Trim with Razor" }, price: "0.00€" },
+      { name: { el: "Αποτρίχωση Αυτιά - Μύτη με Κερί", en: "Ear & Nose Waxing" }, price: "0.00€" },
+      { name: { el: "Ξύρισμα Αγγλικού Τύπου (Παραδοσιακό με Φαλτσέτα)", en: "English Shave (traditional straight razor)" }, price: "15.00€" },
+      { name: { el: "Περιποίηση SPA", en: "SPA Treatment" }, items: [
+        { name: { el: "Μάσκα Νεκράς Θάλασσας (Ενυδατώνει & Θρέφει την Επιδερμίδα)", en: "Dead Sea Mask (hydrates & nourishes the skin)" }, price: "5.00€" },
+        { name: { el: "Το Δεύτερο Λούσιμο", en: "The Second Wash" },        price: "2.00€" }
+      ] }
+    ]
   }
 };

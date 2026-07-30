@@ -503,3 +503,22 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 .ig-loading svg.ic { width: 26px; height: 26px; color: var(--accent); animation: ig-pulse 1.3s ease-in-out infinite; }
 @keyframes ig-pulse { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
 .ig-card-wrap { display: block; }
+
+/* ---------- Price list (ΤΙΜΟΚΑΤΑΛΟΓΟΣ) ---------- */
+.pl-wrap { display: flex; gap: 46px; align-items: center; max-width: 980px; margin: 0 auto; }
+.pl-logo { flex: 0 0 auto; width: 220px; max-width: 34%; }
+.pl-logo img { width: 100%; height: auto; }
+.pl-logo svg.ic { width: 100%; height: auto; color: var(--accent); }
+.pl-list { flex: 1 1 auto; min-width: 0; }
+.pl-row { display: flex; align-items: baseline; gap: 10px; padding: 9px 0; }
+.pl-name { color: var(--text); }
+.pl-dots { flex: 1 1 auto; border-bottom: 1px dotted color-mix(in srgb, var(--accent) 55%, transparent); transform: translateY(-4px); }
+.pl-price { flex: 0 0 auto; font-weight: 700; color: var(--accent); white-space: nowrap; }
+.pl-grouphead { padding-top: 16px; padding-bottom: 2px; }
+.pl-grouphead .pl-name { color: var(--accent); font-weight: 700; font-family: var(--font); font-size: 1.08rem; }
+.pl-sub .pl-name { padding-left: 16px; }
+@media (max-width: 760px) {
+  .pl-wrap { flex-direction: column; gap: 24px; }
+  .pl-logo { width: 160px; max-width: 55%; }
+  .pl-list { width: 100%; }
+}

@@ -91,6 +91,7 @@ const DEFAULT_LABELS = {
   testimonials: { el: "Τι λένε οι πελάτες", en: "What clients say" },
   booking:      { el: "Κλείσε το ραντεβού σου", en: "Book your appointment" },
   instagram:    { el: "Ακολούθησέ μας",     en: "Follow us" },
+  priceList:    { el: "ΤΙΜΟΚΑΤΑΛΟΓΟΣ",       en: "Price list" },
   contact:      { el: "Επικοινωνία",        en: "Contact" }
 };
 
@@ -135,7 +136,7 @@ const BUSINESS_PRESETS = {
   barber: {
     icon: "scissors",
     ctaText: { el: "Κλείσε ραντεβού", en: "Book an appointment" },
-    layout: ["hero", "about", "services", "products", "team", "gallery", "instagram", "testimonials", "contact"],
+    layout: ["hero", "about", "services", "products", "team", "gallery", "instagram", "testimonials", "contact", "priceList"],
     labels: {
       about:    { el: "Σχετικά με εμάς",  en: "About us" },
       products: { el: "Προϊόντα που χρησιμοποιούμε", en: "Products we use" },

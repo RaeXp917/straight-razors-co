@@ -513,16 +513,41 @@
     return sec;
   }
 
+  // Price list (ΤΙΜΟΚΑΤΑΛΟΓΟΣ): the brand logo on the left, the priced list on
+  // the right (dotted leaders). An item with nested `items` becomes a group
+  // heading with indented sub-rows (e.g. an SPA package).
+  function renderPriceList(pl) {
+    const items = (pl && pl.items) || [];
+    if (!items.length) return null;
+    const title = sectionLabel("priceList", pl);
+    const logo = brandAsset("logo", (pl && pl.logo) || CFG.brand.logo, "logo.png") || preset.icon;
+    const priceCell = (v) => (v ? `<span class="pl-dots"></span><span class="pl-price">${escapeHtml(tx(v))}</span>` : "");
+    const line = (it, cls) => `<div class="pl-row${cls ? " " + cls : ""}"><span class="pl-name">${escapeHtml(tx(it.name))}</span>${priceCell(it.price)}</div>`;
+    const blocks = items.map((it) => {
+      if (it.items && it.items.length) {
+        return `<div class="pl-group"><div class="pl-row pl-grouphead"><span class="pl-name">${escapeHtml(tx(it.name))}</span>${priceCell(it.price)}</div>` +
+          it.items.map((s) => line(s, "pl-sub")).join("") + `</div>`;
+      }
+      return line(it);
+    }).join("");
+    const inner = `
+      <div class="pl-wrap">
+        <div class="pl-logo">${iconMarkup(logo, preset.icon)}</div>
+        <div class="pl-list">${blocks}</div>
+      </div>`;
+    return titledSection("priceList", title, inner, "priceList-section");
+  }
+
   /* ---------- registry: section type -> (config key, renderer) ---------- */
   const SECTION_CONFIG_KEY = {
     hero: "hero", about: "about", services: "services", products: "products", menu: "menu", plans: "plans",
     portfolio: "portfolio", team: "team", gallery: "gallery",
-    testimonials: "testimonials", booking: "booking", instagram: "instagram", contact: "contact"
+    testimonials: "testimonials", booking: "booking", instagram: "instagram", priceList: "priceList", contact: "contact"
   };
   const SECTION_RENDERERS = {
     hero: renderHero, about: renderAbout, services: renderServices, products: renderProducts, menu: renderMenu,
     plans: renderPlans, portfolio: renderPortfolio, team: renderTeam, gallery: renderGallery,
-    testimonials: renderTestimonials, booking: renderBooking, instagram: renderInstagram, contact: renderContact
+    testimonials: renderTestimonials, booking: renderBooking, instagram: renderInstagram, priceList: renderPriceList, contact: renderContact
   };
 
   /* ---------- build all sections from the blueprint ---------- */
@@ -561,14 +586,24 @@
     $("brand").innerHTML = brandMarkup();
 
     const nav = $("nav");
-    nav.innerHTML = "";
-    rendered.forEach((type) => {
-      const key = NAV_SECTIONS[type];
-      if (!key) return;
-      const a = el("a", "", ui(key));
-      a.setAttribute("href", "#" + type);
-      nav.appendChild(a);
-    });
+    const burger = $("burger");
+    // showNav:false (config) strips the whole navigation — links + hamburger —
+    // for a short one-scroll ad site. Otherwise build it from rendered sections.
+    if (CFG.showNav === false) {
+      if (nav) nav.remove();
+      if (burger) burger.remove();
+    } else if (nav) {
+      nav.innerHTML = "";
+      rendered.forEach((type) => {
+        const key = NAV_SECTIONS[type];
+        if (!key) return;
+        const a = el("a", "", ui(key));
+        a.setAttribute("href", "#" + type);
+        nav.appendChild(a);
+      });
+      if (burger) burger.onclick = () => nav.classList.toggle("open");
+      nav.onclick = (e) => { if (e.target.tagName === "A") nav.classList.remove("open"); };
+    }
 
     const ls = $("langSwitch");
     if (CFG.showSwitcher) {
@@ -584,9 +619,6 @@
     $("navCall").innerHTML = icon("phone");
     $("fab").href = telHref(CFG.contact.phone);
     $("fab").innerHTML = icon("phone");
-
-    $("burger").onclick = () => nav.classList.toggle("open");
-    nav.onclick = (e) => { if (e.target.tagName === "A") nav.classList.remove("open"); };
   }
 
   function renderFooter() {
