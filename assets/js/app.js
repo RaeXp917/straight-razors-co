@@ -646,12 +646,27 @@
     } else if (feedUrl) {
       feed = `<div class="ig-feed" aria-live="polite"><div class="ig-loading">${icon("instagram")}<span>…</span></div></div>`;
     } else if (posts.length) {
-      const cards = posts.map((permalink) => {
-        const sep = permalink.includes("?") ? "&amp;" : "?";
-        const link = `${escapeHtml(permalink)}${sep}utm_source=ig_embed&amp;utm_campaign=loading`;
-        return `<blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="${link}" data-instgrm-version="14"></blockquote>`;
+      // Premium horizontal carousel: one embed centered, prev/next peeking.
+      // Each official embed sits in OUR restrained black/gold frame; the embed
+      // itself is untouched. No `data-instgrm-captioned` (hide long captions).
+      // A plain link inside each blockquote is the fallback if IG is blocked —
+      // embed.js replaces it with the real post when it processes.
+      const slides = posts.map((permalink) => {
+        const p = escapeHtml(permalink);
+        return `<div class="ig-slide"><div class="ig-frame">` +
+          `<blockquote class="instagram-media" data-instgrm-permalink="${p}" data-instgrm-version="14">` +
+          `<a class="ig-fallback" href="${p}" target="_blank" rel="noopener noreferrer">${icon("instagram")}<span>Instagram</span></a>` +
+          `</blockquote></div></div>`;
       }).join("");
-      feed = `<div class="ig-posts">${cards}</div>`;
+      const dots = posts.map((_, i) =>
+        `<button type="button" class="ig-dot${i === 0 ? " active" : ""}" aria-label="${i + 1}"></button>`).join("");
+      feed = `
+        <div class="ig-carousel-wrap">
+          <button type="button" class="ig-arrow ig-prev" aria-label="${escapeHtml(ui("prev"))}">${icon("chevronLeft")}</button>
+          <div class="ig-carousel" tabindex="0" role="region" aria-label="Instagram">${slides}</div>
+          <button type="button" class="ig-arrow ig-next" aria-label="${escapeHtml(ui("next"))}">${icon("chevronRight")}</button>
+        </div>
+        <div class="ig-dots" role="tablist">${dots}</div>`;
     } else {
       feed = url ? `<a class="ig-card" href="${url}" target="_blank" rel="noopener">${icon("instagram")}${at ? `<span>${escapeHtml(at)}</span>` : ""}</a>` : "";
     }
@@ -947,6 +962,63 @@
     });
   }
 
+  /* ---------- Instagram carousel: snap scroll + arrows + dots + drag ----------
+     Distinct from the auto-scrolling service carousel (which clones its cards —
+     we must NOT clone IG embeds). Native overflow gives trackpad + touch swipe;
+     we add arrows, dots, mouse-drag and keyboard on top. */
+  function initIgCarousels() {
+    document.querySelectorAll("#app .ig-carousel").forEach((car) => {
+      const sec = car.closest("section");
+      const slides = Array.from(car.querySelectorAll(".ig-slide"));
+      if (!sec || !slides.length) return;
+      const dots = Array.from(sec.querySelectorAll(".ig-dot"));
+      const prev = sec.querySelector(".ig-prev");
+      const next = sec.querySelector(".ig-next");
+      const centerOf = (s) => s.offsetLeft - (car.clientWidth - s.clientWidth) / 2;
+      const current = () => {
+        const mid = car.scrollLeft + car.clientWidth / 2;
+        let best = 0, bd = Infinity;
+        slides.forEach((s, i) => { const d = Math.abs((s.offsetLeft + s.clientWidth / 2) - mid); if (d < bd) { bd = d; best = i; } });
+        return best;
+      };
+      const go = (i) => {
+        i = Math.max(0, Math.min(slides.length - 1, i));
+        car.scrollTo({ left: centerOf(slides[i]), behavior: "smooth" });
+      };
+      const sync = () => { const i = current(); dots.forEach((d, k) => d.classList.toggle("active", k === i)); };
+      if (prev) prev.addEventListener("click", () => go(current() - 1));
+      if (next) next.addEventListener("click", () => go(current() + 1));
+      dots.forEach((d, i) => d.addEventListener("click", () => go(i)));
+      let ticking = false;
+      car.addEventListener("scroll", () => {
+        if (ticking) return; ticking = true;
+        requestAnimationFrame(() => { sync(); ticking = false; });
+      }, { passive: true });
+      car.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") { e.preventDefault(); go(current() - 1); }
+        else if (e.key === "ArrowRight") { e.preventDefault(); go(current() + 1); }
+      });
+      // Mouse drag-to-scroll (touch/trackpad already work natively). Over the IG
+      // iframe the events won't fire — the frame padding / peeks give a grab area.
+      let down = false, startX = 0, startLeft = 0, moved = false;
+      car.addEventListener("pointerdown", (e) => {
+        if (e.pointerType !== "mouse") return;
+        down = true; moved = false; startX = e.clientX; startLeft = car.scrollLeft; car.classList.add("dragging");
+      });
+      car.addEventListener("pointermove", (e) => {
+        if (!down) return;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 3) moved = true;
+        car.scrollLeft = startLeft - dx;
+      });
+      const end = () => { if (!down) return; down = false; car.classList.remove("dragging"); go(current()); };
+      car.addEventListener("pointerup", end);
+      car.addEventListener("pointerleave", end);
+      car.addEventListener("click", (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+      sync();
+    });
+  }
+
   /* ---------- lightbox: let visitors click a picture to view it large ---------- */
   function initLightbox() {
     let ov = document.getElementById("lightbox");
@@ -984,6 +1056,7 @@
     renderFooter();
     initReveal();
     initCarousels();
+    initIgCarousels();
     initLightbox();
   }
 

@@ -48,6 +48,8 @@ const UI_TEXT = {
     reviews_filter_note: "Εμφανίζονται οι πιο πρόσφατες αξιολογήσεις με βαθμολογία 4★ ή 5★.",
     reviews_see_all:     "Δείτε όλες τις αξιολογήσεις στο Google",
     reviews_empty:       "Δείτε τι λένε οι πελάτες μας στο Google.",
+    prev:         "Προηγούμενο",
+    next:         "Επόμενο",
     ig_follow:    "Ακολουθήστε μας στο Instagram",
     ig_subtitle:  "Δείτε τις τελευταίες δουλειές & τα stories μας"
   },
@@ -86,6 +88,8 @@ const UI_TEXT = {
     reviews_filter_note: "Showing the most recent reviews rated 4★ or 5★.",
     reviews_see_all:     "See all reviews on Google",
     reviews_empty:       "See what our customers say on Google.",
+    prev:         "Previous",
+    next:         "Next",
     ig_follow:    "Follow us on Instagram",
     ig_subtitle:  "See our latest work & stories"
   }

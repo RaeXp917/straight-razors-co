@@ -143,7 +143,7 @@ const SITE_CONFIG = {
     enabled: true,
     title: { el: "Το προσωπικό μας", en: "Our staff" },
     members: [
-      { name: { first: { el: "Σάκης", en: "Sakis" }, last: { el: "Πλιάξας", en: "Pliaxas" } },
+      { name: { first: { el: "Σάκης", en: "Sakis" }, last: { el: "Πλιάχας", en: "Pliaxas" } },
         role: { el: "Ιδιοκτήτης Κουρέας", en: "Owner Barber" },
         photo: "assets/img/sakis.png",
         instagram: "https://www.instagram.com/straight_razors_co_2019/" },
@@ -228,11 +228,11 @@ const SITE_CONFIG = {
   instagram: {
     enabled:  true,
     url:      "https://www.instagram.com/straight_razors_co_2019/?hl=el",
-    title:    { el: "Το Instagram μας!", en: "Our Instagram!" },
-    // handle + subtitle intentionally omitted — the title + gallery + button
-    // carry the section on their own (cleaner header).
-    ctaText:  { el: "Δείτε ολόκληρο το προφίλ στο Instagram",
-                en: "See the full profile on Instagram" },
+    title:    { el: "Οι δουλειές μας στο Instagram", en: "Our work on Instagram" },
+    subtitle: { el: "Δείτε μερικές από τις δημιουργίες μας",
+                en: "See some of our creations" },
+    ctaText:  { el: "Δείτε όλες τις δουλειές μας στο Instagram",
+                en: "See all our work on Instagram" },
 
     /* Six real posts rendered ON the page as a gallery, via Instagram's OFFICIAL
        embed (embed.js). No API, no scraping, no rehosting — just the permalinks.
