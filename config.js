@@ -108,7 +108,8 @@ const SITE_CONFIG = {
      Shown below Services. Rename these and drop product-1.jpg … in the brand
      folder to show real photos (missing images → a clean box placeholder).   */
   products: {
-    enabled: true,
+    enabled: false,   // HIDDEN until real product names + photos are provided
+                      // (was showing "Product 1/2/3" placeholders publicly).
     title: { el: "Προϊόντα που χρησιμοποιούμε", en: "Products we use" },
     items: [
       { name: { el: "Product 1", en: "Product 1" }, image: "product-1.jpg" },
@@ -120,7 +121,8 @@ const SITE_CONFIG = {
   /* --- 10. TEAM / EMPLOYEES ------------------------------------------------
      Staff photos resolve from brand.assetsDir using staff-1.jpg, etc.        */
   team: {
-    enabled: true,
+    enabled: false,   // HIDDEN until real staff names + photos are provided
+                      // (was showing "Όνομα Επίθετο" + silhouette placeholders).
     title: { el: "Το προσωπικό μας", en: "Our staff" },
     // 👇 Replace names only; matching staff-1.jpg files are loaded automatically.
     members: [
