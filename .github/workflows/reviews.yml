@@ -4,10 +4,14 @@ name: Refresh Google reviews
 # Profile reviews with the official API using repo SECRETS, writes the public
 # cache assets/data/reviews.json, and commits it so GitHub Pages serves it.
 on:
-  schedule:
-    - cron: "*/30 * * * *"     # every 30 minutes (it only commits when a review
-                                # actually changed, so quiet runs cost nothing)
-  workflow_dispatch: {}         # allow a manual run from the Actions tab
+  # Auto-refresh is PARKED until the Google API secrets are added. To turn it
+  # on, uncomment the schedule below (every 30 min; it only commits when a
+  # review actually changed). Until then the site shows the static rating +
+  # Google button, and this workflow can still be run by hand from the Actions
+  # tab (it just skips with a message when the secrets are missing).
+  # schedule:
+  #   - cron: "*/30 * * * *"
+  workflow_dispatch: {}         # manual run from the Actions tab
 
 permissions:
   contents: write               # needed to commit the refreshed cache
