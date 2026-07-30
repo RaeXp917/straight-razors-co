@@ -85,8 +85,8 @@ const SITE_CONFIG = {
     enabled: true,
     title: { el: "Σχετικά με εμάς", en: "About us" },
     text: {
-      el: "Στο Straight Razors Co προσφέρουμε επαγγελματικό κούρεμα, ξύρισμα και περιποίηση για άντρες και παιδιά, σε έναν καθαρό χώρο με σεβασμό στην υγιεινή. Ευγενικό & έμπειρο προσωπικό, βαθμολογία 5.0★ από τους πελάτες μας. Δεχόμαστε μετρητά και κάρτες (Visa, Mastercard).",
-      en: "At Straight Razors Co we offer professional haircuts, shaves and grooming for men and kids, in a clean space with strict hygiene. Polite, experienced staff and a 5.0★ customer rating. We accept cash and cards (Visa, Mastercard)."
+      el: "Στο Straight Razors Co προσφέρουμε επαγγελματικό κούρεμα, ξύρισμα και περιποίηση για άντρες και παιδιά, σε έναν καθαρό χώρο με σεβασμό στην υγιεινή. Ευγενικό & έμπειρο προσωπικό, βαθμολογία 5.0★ από τους πελάτες μας.",
+      en: "At Straight Razors Co we offer professional haircuts, shaves and grooming for men and kids, in a clean space with strict hygiene. Polite, experienced staff and a 5.0★ customer rating."
     }
   },
 
@@ -181,8 +181,8 @@ const SITE_CONFIG = {
      static content here. Setup steps live in README.md → "Google reviews".    */
   testimonials: {
     enabled: true,
-    title:    { el: "Μην μας πιστεύετε — πιστέψτε τους πελάτες μας!",
-                en: "Don't take our word for it — trust our customers!" },
+    title:    { el: "Δεν πιστεύετε εμάς; Πιστέψτε τους πελάτες μας!",
+                en: "Don't believe us? Trust our customers!" },
     subtitle: { el: "Αληθινές αξιολογήσεις από πελάτες μας στο Google",
                 en: "Real reviews from our customers on Google" },
     // Real Google rating for the shop (matches the 117 reviews on the profile).
@@ -226,7 +226,7 @@ const SITE_CONFIG = {
   instagram: {
     enabled:  true,
     url:      "https://www.instagram.com/straight_razors_co_2019/?hl=el",
-    title:    { el: "Οι δουλειές μας στο Instagram", en: "Our work on Instagram" },
+    title:    { el: "Το Instagram μας!", en: "Our Instagram!" },
     // handle + subtitle intentionally omitted — the title + gallery + button
     // carry the section on their own (cleaner header).
     ctaText:  { el: "Δείτε ολόκληρο το προφίλ στο Instagram",

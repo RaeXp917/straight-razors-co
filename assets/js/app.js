@@ -176,9 +176,18 @@
     const title = sectionLabel("about", a);
     const text = t(a && a.text) || "";
     const logo = brandAsset("logo", CFG.brand.logo, "logo.png") || preset.icon;
+    // Turn the "5.0★" in the copy into a gold link to the shop's Google reviews
+    // (same target as the reviews section's "see all" button). escapeHtml runs
+    // first, then we swap in the anchor — so nothing else can inject markup.
+    let bodyHtml = escapeHtml(text);
+    if (bodyHtml.includes("5.0★")) {
+      const rlink = (CFG.testimonials && tx(CFG.testimonials.reviewsPageUrl)) || mapsLink();
+      bodyHtml = bodyHtml.replace("5.0★",
+        `<a class="about-rating" href="${escapeHtml(rlink)}" target="_blank" rel="noopener noreferrer">5.0★</a>`);
+    }
     const inner = `
       <div class="about-grid">
-        <div class="about-text"><h2>${escapeHtml(title)}</h2>${text ? `<p>${escapeHtml(text)}</p>` : ""}</div>
+        <div class="about-text"><h2>${escapeHtml(title)}</h2>${text ? `<p>${bodyHtml}</p>` : ""}</div>
         <div class="about-badge">${iconMarkup(logo, preset.icon)}</div>
       </div>`;
     return sectionEl("about", inner);
@@ -813,8 +822,11 @@
     const ls = $("langSwitch");
     if (CFG.showSwitcher) {
       ls.innerHTML = "";
+      // Internal codes stay "el"/"en" (translations + storage depend on them);
+      // only the button LABELS differ.
+      const LANG_LABELS = { el: "GR", en: "ENG" };
       ["el", "en"].forEach((L) => {
-        const b = el("button", L === lang ? "active" : "", L.toUpperCase());
+        const b = el("button", L === lang ? "active" : "", LANG_LABELS[L] || L.toUpperCase());
         b.onclick = () => setLang(L);
         ls.appendChild(b);
       });

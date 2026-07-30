@@ -153,7 +153,7 @@ const BUSINESS_PRESETS = {
     // The location block (contact + map + price list, combined & compact) lives
     // at the very bottom, directly above the footer. "contact" and "priceList"
     // are intentionally NOT listed — renderLocationInfo pulls in both.
-    layout: ["hero", "about", "services", "products", "team", "gallery", "instagram", "testimonials", "locationInfo"],
+    layout: ["hero", "about", "team", "services", "products", "gallery", "instagram", "testimonials", "locationInfo"],
     labels: {
       about:    { el: "Σχετικά με εμάς",  en: "About us" },
       products: { el: "Προϊόντα που χρησιμοποιούμε", en: "Products we use" },
