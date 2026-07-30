@@ -8,7 +8,7 @@ no backend — hosted free on **GitHub Pages**. Works on mobile and desktop.
 Once GitHub Pages is enabled (Settings → Pages → Deploy from branch → `main` / root):
 
 ```
-https://<your-username>.github.io/straight-razors-co/
+(https://raexp917.github.io/straight-razors-co/)
 ```
 
 ## Editing
