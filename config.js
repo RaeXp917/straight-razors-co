@@ -160,10 +160,12 @@ const SITE_CONFIG = {
   gallery: {
     enabled: true,
     title: { el: "Ο χώρος μας", en: "Our space" },
+    // example1 removed; owner photo + the two kept shop photos (full paths in
+    // assets/img are used as-is).
     images: [
-      "gallery-1.jpg",
-      "gallery-2.jpg",
-      "gallery-3.jpg"
+      "assets/img/sakis.png",
+      "assets/img/example2.jpg",
+      "assets/img/example3.jpg"
     ]
   },
 
