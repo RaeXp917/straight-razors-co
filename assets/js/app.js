@@ -44,8 +44,11 @@
   };
   const telHref = (p) => "tel:" + (p || "").replace(/[^\d+]/g, "");
   const personLabel = (name) => {
-    if (name && typeof name === "object") return [name.first, name.last].filter(Boolean).join(" ").trim();
-    return String(name || "").trim();
+    // first/last may be plain strings OR localized {el,en} objects.
+    if (name && typeof name === "object" && !("el" in name) && !("en" in name)) {
+      return [tx(name.first), tx(name.last)].filter(Boolean).join(" ").trim();
+    }
+    return tx(name).trim();
   };
   const escapeHtml = (value) => String(value == null ? "" : value).replace(/[&<>\"']/g, (ch) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
@@ -342,28 +345,129 @@
     return titledSection("portfolio", title, `<div class="portfolio-grid">${tiles}</div>`);
   }
 
+  /* ---------- Google reviews (LIVE, from the cache the CI writes) ------------
+     Cards + the overall rating come from assets/data/reviews.json, which the
+     scheduled GitHub Action fills from the official Google Business Profile API.
+     The browser NEVER calls Google directly and never sees any credentials —
+     it only reads a static, public JSON file. No hard-coded or fake reviews:
+     on any failure we show a clean message + a link to Google, never invented
+     testimonials. */
+  const REVIEWS_URL = "assets/data/reviews.json";
+  const clampRating = (n) => Math.max(0, Math.min(5, Math.round(Number(n) || 0)));
+  const ratingAria = (n) => (lang === "en" ? `Rated ${n} out of 5 stars` : `Βαθμολογία ${n} στα 5 αστέρια`);
+  function relTime(iso) {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    const diff = Math.round((d.getTime() - Date.now()) / 1000);   // seconds (negative = past)
+    const table = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
+    let unit = "minute", value = Math.round(diff / 60);
+    for (const [u, s] of table) { if (Math.abs(diff) >= s) { unit = u; value = Math.round(diff / s); break; } }
+    try { return new Intl.RelativeTimeFormat(lang || "el", { numeric: "auto" }).format(value, unit); }
+    catch (e) { return d.toLocaleDateString(lang || "el"); }
+  }
+  function reviewCard(r) {
+    const rating = clampRating(r.rating);
+    const name = escapeHtml(r.author || "");
+    const initialsTxt = escapeHtml(initials(r.author) || "★");
+    const ph = `<span class="rv-avatar rv-avatar-ph"${r.profilePhotoUrl ? " hidden" : ""}>${initialsTxt}</span>`;
+    const img = r.profilePhotoUrl
+      ? `<img class="rv-avatar" src="${escapeHtml(r.profilePhotoUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.hidden=true;this.previousElementSibling.hidden=false">`
+      : "";
+    const hasText = r.comment && String(r.comment).trim();
+    const body = hasText
+      ? `<p class="rv-text rv-clamp">${escapeHtml(r.comment)}</p><button type="button" class="rv-more" hidden>${escapeHtml(ui("reviews_more"))}</button>`
+      : `<p class="rv-text rv-nocomment">${escapeHtml(ui("reviews_no_comment"))}</p>`;
+    const date = relTime(r.updateTime || r.createTime);
+    return `<article class="review-card">
+      <header class="rv-head">
+        ${ph}${img}
+        <div class="rv-id">
+          <span class="rv-name">${name}</span>
+          <span class="review-stars" role="img" aria-label="${escapeHtml(ratingAria(rating))}">${stars(rating)}</span>
+        </div>
+      </header>
+      ${body}
+      <footer class="rv-foot">
+        <span class="rv-src">${icon("google")}<span>${escapeHtml(ui("reviews_attribution"))}</span></span>
+        ${date ? `<span class="rv-date">${escapeHtml(date)}</span>` : ""}
+      </footer>
+    </article>`;
+  }
+  // Only offer "Περισσότερα" when the text is actually clipped by the clamp.
+  function wireReviewExpanders(root) {
+    root.querySelectorAll(".rv-clamp").forEach((p) => {
+      const btn = p.nextElementSibling;
+      if (!btn || !btn.classList.contains("rv-more")) return;
+      if (p.scrollHeight - p.clientHeight > 4) {
+        btn.hidden = false;
+        btn.addEventListener("click", () => {
+          const open = p.classList.toggle("rv-open");
+          btn.textContent = ui(open ? "reviews_less" : "reviews_more");
+        });
+      }
+    });
+  }
+  function renderReviewsSummary(avg, count) {
+    if (avg == null || isNaN(Number(avg))) return "";
+    const r = Number(avg);
+    return `<div class="reviews-summary">
+        <span class="reviews-score">${escapeHtml(r.toFixed(1))}</span>
+        <span class="reviews-stars" role="img" aria-label="${escapeHtml(ratingAria(clampRating(r)))}">${stars(r)}</span>
+        ${count != null ? `<span class="reviews-count">${escapeHtml(String(count))} ${ui("reviews_word")}</span>` : ""}
+      </div>`;
+  }
+  function loadGoogleReviews(sec, ts) {
+    const summaryBox = sec.querySelector(".reviews-summary-slot");
+    const grid = sec.querySelector(".reviews-grid");
+    const foot = sec.querySelector(".reviews-foot");
+    const cfgUrl = tx(ts && ts.reviewsPageUrl) || "";
+    const seeAll = (url) => `<a class="reviews-all" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${icon("google")}<span>${escapeHtml(ui("reviews_see_all"))}</span></a>`;
+    const showEmpty = (url) => {
+      if (summaryBox) summaryBox.innerHTML = "";
+      grid.setAttribute("aria-busy", "false");
+      grid.classList.add("is-empty");
+      grid.innerHTML = `<p class="reviews-empty">${escapeHtml(ui("reviews_empty"))}</p>`;
+      foot.innerHTML = seeAll(url || cfgUrl || mapsLink());
+    };
+    const ctrl = ("AbortController" in window) ? new AbortController() : null;
+    const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, 8000);
+    fetch(REVIEWS_URL, { cache: "no-cache", signal: ctrl ? ctrl.signal : undefined })
+      .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+      .then((data) => {
+        const url = (data && data.reviewsPageUrl) || cfgUrl || mapsLink();
+        const list = (data && Array.isArray(data.reviews) ? data.reviews : [])
+          .filter((r) => clampRating(r.rating) >= 4).slice(0, 6);
+        if (!list.length) return showEmpty(url);
+        if (summaryBox) summaryBox.innerHTML = renderReviewsSummary(data.averageRating, data.totalReviewCount);
+        grid.setAttribute("aria-busy", "false");
+        grid.classList.remove("is-empty");
+        grid.innerHTML = list.map(reviewCard).join("");
+        wireReviewExpanders(grid);
+        foot.innerHTML = `<p class="reviews-note">${escapeHtml(ui("reviews_filter_note"))}</p>${seeAll(url)}`;
+      })
+      .catch(() => showEmpty(cfgUrl || mapsLink()))
+      .finally(() => clearTimeout(timer));
+  }
   function renderTestimonials(ts) {
-    if (!ts) return null;
-    const items = ts.items || [];
-    const summary = ts.summary;
-    if (!items.length && !summary) return null;
+    ts = ts || {};
+    if (ts.enabled === false) return null;
     const title = sectionLabel("testimonials", ts);
-    let head = "";
-    if (summary) {
-      const rating = summary.rating != null ? summary.rating : 5;
-      head = `<div class="reviews-summary">
-          <span class="reviews-score">${escapeHtml(String(rating))}</span>
-          <span class="reviews-stars">${stars(rating)}</span>
-          ${summary.count ? `<span class="reviews-count">${escapeHtml(String(summary.count))} ${ui("reviews_word")}</span>` : ""}
-        </div>`;
-    }
-    const cards = items.map((it) => `
-      <blockquote class="review-card reveal">
-        <div class="review-stars">${stars(it.rating != null ? it.rating : 5)}</div>
-        <p class="review-quote">${escapeHtml(tx(it.quote))}</p>
-        <footer class="review-author">${escapeHtml(tx(it.author))}${it.role ? `<span>${escapeHtml(tx(it.role))}</span>` : ""}</footer>
-      </blockquote>`).join("");
-    return titledSection("testimonials", title, head + (cards ? `<div class="reviews-grid">${cards}</div>` : ""));
+    const subtitle = t(ts.subtitle);
+    const skeleton = Array.from({ length: 6 }).map(() => `
+      <div class="review-card rv-skeleton" aria-hidden="true">
+        <div class="rv-head"><span class="sk sk-avatar"></span>
+          <div class="rv-id"><span class="sk sk-line sk-name"></span><span class="sk sk-line sk-stars"></span></div></div>
+        <span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line sk-short"></span>
+      </div>`).join("");
+    const inner = `
+      ${subtitle ? `<p class="reviews-sub">${escapeHtml(subtitle)}</p>` : ""}
+      <div class="reviews-summary-slot"></div>
+      <div class="reviews-grid" aria-live="polite" aria-busy="true">${skeleton}</div>
+      <div class="reviews-foot"></div>`;
+    const sec = titledSection("testimonials", title, inner);
+    loadGoogleReviews(sec, ts);
+    return sec;
   }
 
   function renderBooking(bk) {
@@ -498,7 +602,7 @@
     if (!url && !ig.embedHtml && !posts.length && !feedUrl) return null;   // nothing to show
     const title = sectionLabel("instagram", ig);
     const at = handle ? "@" + handle : "";
-    const sub = t(ig.subtitle) || ui("ig_subtitle");
+    const sub = t(ig.subtitle);   // no default — only shown if explicitly set
     const followText = t(ig.ctaText) || ui("ig_follow");
     const follow = url
       ? `<a class="btn btn-accent ig-follow" href="${url}" target="_blank" rel="noopener noreferrer">${icon("instagram")}<span>${escapeHtml(followText)}</span></a>`
@@ -521,11 +625,11 @@
     } else {
       feed = url ? `<a class="ig-card" href="${url}" target="_blank" rel="noopener">${icon("instagram")}${at ? `<span>${escapeHtml(at)}</span>` : ""}</a>` : "";
     }
+    const head = (at || sub)
+      ? `<div class="ig-head">${at ? `<p class="ig-handle">${escapeHtml(at)}</p>` : ""}${sub ? `<p class="ig-sub">${escapeHtml(sub)}</p>` : ""}</div>`
+      : "";
     const inner = `
-      <div class="ig-head">
-        ${at ? `<p class="ig-handle">${escapeHtml(at)}</p>` : ""}
-        ${sub ? `<p class="ig-sub">${escapeHtml(sub)}</p>` : ""}
-      </div>
+      ${head}
       ${feed}
       ${follow ? `<div class="ig-cta">${follow}</div>` : ""}`;
     const sec = titledSection("instagram", title, inner, "instagram-section");

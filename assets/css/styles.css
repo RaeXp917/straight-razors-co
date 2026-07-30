@@ -378,18 +378,70 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 }
 .ba-label { text-align: center; color: var(--muted); font-size: .95rem; margin-top: 12px; }
 
-/* ---------- Reviews / testimonials ---------- */
-.reviews-summary { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin: -20px 0 40px; }
+/* ---------- Reviews / testimonials (live Google reviews) ---------- */
+.reviews-sub { text-align: center; color: var(--muted); margin: -28px 0 26px; font-size: 1.05rem; }
+.reviews-summary-slot:empty { display: none; }
+.reviews-summary { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin: 0 0 40px; }
 .reviews-score { font-size: 2.6rem; font-weight: 700; color: var(--accent); font-family: var(--font); line-height: 1; }
 .reviews-count { color: var(--muted); font-size: .95rem; }
 .reviews-stars, .review-stars { display: inline-flex; gap: 2px; }
 .star svg.ic { width: 20px; height: 20px; color: color-mix(in srgb, var(--muted) 45%, transparent); }
 .star.on svg.ic { color: var(--accent); fill: var(--accent); }
-.reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-.review-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px; margin: 0; display: flex; flex-direction: column; gap: 12px; }
-.review-quote { color: var(--text); font-size: 1.02rem; font-style: italic; flex: 1; }
-.review-author { font-weight: 700; color: var(--primary); font-style: normal; }
-.review-author span { display: block; font-weight: 500; color: var(--muted); font-size: .88rem; }
+
+/* Desktop 3 / tablet 2 / mobile 1. align-items:start so short cards don't
+   stretch to the tallest one and leave big empty gaps. */
+.reviews-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: start; }
+@media (max-width: 960px) { .reviews-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .reviews-grid { grid-template-columns: 1fr; } }
+.reviews-grid.is-empty { display: block; }
+
+.review-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 24px 22px; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+.rv-head { display: flex; align-items: center; gap: 12px; }
+.rv-avatar { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; flex: none;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
+.rv-avatar-ph { display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+  color: var(--accent); font-weight: 700; font-family: var(--font); font-size: 1.05rem; }
+.rv-id { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.rv-name { font-weight: 700; color: var(--primary); }
+.rv-text { color: var(--text); font-size: 1rem; white-space: pre-line; }
+.rv-text.rv-clamp { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.rv-text.rv-clamp.rv-open { display: block; overflow: visible; }
+.rv-nocomment { color: var(--muted); font-style: italic; }
+.rv-more { align-self: flex-start; background: none; border: 0; padding: 0; cursor: pointer;
+  color: var(--accent); font: inherit; font-weight: 600; text-decoration: underline; }
+.rv-more:hover { color: var(--accent2); }
+.rv-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-top: 2px; padding-top: 12px; border-top: 1px solid var(--line); }
+.rv-src { display: inline-flex; align-items: center; gap: 6px; font-size: .82rem; font-weight: 600;
+  color: var(--muted); letter-spacing: .01em; }
+.rv-src svg.ic { width: 16px; height: 16px; color: var(--accent); }
+.rv-date { color: var(--muted); font-size: .82rem; white-space: nowrap; }
+
+/* filter disclosure + "see all on Google" link */
+.reviews-foot { text-align: center; margin-top: 34px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.reviews-note { color: var(--muted); font-size: .92rem; }
+.reviews-empty { color: var(--muted); text-align: center; font-size: 1.05rem; padding: 20px 0; }
+.reviews-all { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px;
+  border: 1px solid var(--accent); border-radius: var(--radius); color: var(--accent);
+  font-weight: 600; transition: background .2s ease, color .2s ease; }
+.reviews-all:hover { background: var(--accent); color: #0B0B0C; }
+.reviews-all svg.ic { width: 18px; height: 18px; }
+
+/* loading skeletons (shimmer) */
+.rv-skeleton { gap: 12px; }
+.sk { display: block; border-radius: 6px; background: color-mix(in srgb, var(--muted) 22%, transparent);
+  position: relative; overflow: hidden; }
+.sk::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--primary) 10%, transparent), transparent);
+  animation: sk-shimmer 1.4s infinite; }
+.sk-avatar { width: 46px; height: 46px; border-radius: 50%; flex: none; }
+.sk-line { height: 12px; margin: 3px 0; }
+.sk-name { width: 55%; }
+.sk-stars { width: 90px; }
+.sk-short { width: 60%; }
+@keyframes sk-shimmer { 100% { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .sk::after { animation: none; } }
 
 /* ---------- Booking band (salon / beauty) ---------- */
 .booking-section { background: var(--surface);

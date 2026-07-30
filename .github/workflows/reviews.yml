@@ -1,0 +1,50 @@
+name: Refresh Google reviews
+
+# Runs server-side (never in the browser). Pulls the latest Google Business
+# Profile reviews with the official API using repo SECRETS, writes the public
+# cache assets/data/reviews.json, and commits it so GitHub Pages serves it.
+on:
+  schedule:
+    - cron: "0 */6 * * *"      # every 6 hours
+  workflow_dispatch: {}         # allow a manual run from the Actions tab
+
+permissions:
+  contents: write               # needed to commit the refreshed cache
+
+concurrency:
+  group: refresh-google-reviews
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch latest Google reviews
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          GOOGLE_BUSINESS_ACCOUNT_ID: ${{ secrets.GOOGLE_BUSINESS_ACCOUNT_ID }}
+          GOOGLE_BUSINESS_LOCATION_ID: ${{ secrets.GOOGLE_BUSINESS_LOCATION_ID }}
+          GOOGLE_REVIEWS_PAGE_URL: ${{ secrets.GOOGLE_REVIEWS_PAGE_URL }}
+        run: node scripts/fetch-google-reviews.mjs
+
+      - name: Commit refreshed cache (only if it changed)
+        run: |
+          if [ -n "$(git status --porcelain assets/data/reviews.json)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add assets/data/reviews.json
+            git commit -m "chore: refresh Google reviews cache [skip ci]"
+            git push
+          else
+            echo "No review changes to commit."
+          fi

@@ -41,6 +41,13 @@ const UI_TEXT = {
     before:       "Πριν",
     after:        "Μετά",
     reviews_word: "κριτικές",
+    reviews_attribution: "Αξιολόγηση Google",
+    reviews_no_comment:  "Αξιολόγηση χωρίς γραπτό σχόλιο",
+    reviews_more:        "Περισσότερα",
+    reviews_less:        "Λιγότερα",
+    reviews_filter_note: "Εμφανίζονται οι πιο πρόσφατες αξιολογήσεις με βαθμολογία 4★ ή 5★.",
+    reviews_see_all:     "Δείτε όλες τις αξιολογήσεις στο Google",
+    reviews_empty:       "Δεν υπάρχουν διαθέσιμες αξιολογήσεις αυτή τη στιγμή.",
     ig_follow:    "Ακολουθήστε μας στο Instagram",
     ig_subtitle:  "Δείτε τις τελευταίες δουλειές & τα stories μας"
   },
@@ -72,6 +79,13 @@ const UI_TEXT = {
     before:       "Before",
     after:        "After",
     reviews_word: "reviews",
+    reviews_attribution: "Google review",
+    reviews_no_comment:  "Rating without a written comment",
+    reviews_more:        "More",
+    reviews_less:        "Less",
+    reviews_filter_note: "Showing the most recent reviews rated 4★ or 5★.",
+    reviews_see_all:     "See all reviews on Google",
+    reviews_empty:       "No reviews are available right now.",
     ig_follow:    "Follow us on Instagram",
     ig_subtitle:  "See our latest work & stories"
   }

@@ -143,11 +143,11 @@ const SITE_CONFIG = {
     enabled: true,
     title: { el: "Το προσωπικό μας", en: "Our staff" },
     members: [
-      { name: { first: "Sakis", last: "Pliaxas" },
+      { name: { first: { el: "Σάκης", en: "Sakis" }, last: { el: "Πλιάξας", en: "Pliaxas" } },
         role: { el: "Ιδιοκτήτης – Κουρέας", en: "Owner Barber" },
         photo: "assets/img/sakis.png",
         instagram: "https://www.instagram.com/straight_razors_co_2019/" },
-      { name: { first: "Tasos", last: "Mpourakou" },
+      { name: { first: { el: "Τάσος", en: "Tasos" }, last: { el: "Μπουράκου", en: "Mpourakou" } },
         role: { el: "Κουρέας", en: "Employee Barber" },
         photo: "assets/img/tasos.png",
         // Points to the shop profile until Tasos' own Instagram handle is known.
@@ -167,28 +167,22 @@ const SITE_CONFIG = {
     ]
   },
 
-  /* --- 12. REVIEWS / TESTIMONIALS -----------------------------------------
-     Shown as a "reviews" section for business types whose blueprint includes
-     it (barber, gym, restaurant…). `summary` is the headline rating badge.   */
+  /* --- 12. REVIEWS / TESTIMONIALS (LIVE from Google) -----------------------
+     No hard-coded reviews. Cards + the overall rating/count are pulled at
+     runtime from assets/data/reviews.json, which a scheduled GitHub Action
+     refills every 6 hours from the OFFICIAL Google Business Profile Reviews
+     API (server-side, with secrets — the browser never calls Google directly).
+     Setup steps + required credentials are in README.md → "Google reviews".   */
   testimonials: {
-    summary: { rating: "5.0", count: 117 },
-    items: [
-      {
-        quote: { el: "Το καλύτερο κούρεμα που έχω κάνει. Αξίζει το ταξίδι από Θεσσαλονίκη.",
-                 en: "The best haircut I've ever had. Worth the trip from Thessaloniki." },
-        author: "Google review", rating: 5
-      },
-      {
-        quote: { el: "Καθαρός χώρος, έμπειροι επαγγελματίες και άψογη εξυπηρέτηση.",
-                 en: "Clean space, experienced professionals and flawless service." },
-        author: "Google review", rating: 5
-      },
-      {
-        quote: { el: "Πάντα ευγενικοί και προσεκτικοί. Τους συνιστώ ανεπιφύλακτα.",
-                 en: "Always polite and attentive. I recommend them without reservation." },
-        author: "Google review", rating: 5
-      }
-    ]
+    enabled: true,
+    title:    { el: "Μην μας πιστεύετε — πιστέψτε τους πελάτες μας!",
+                en: "Don't take our word for it — trust our customers!" },
+    subtitle: { el: "Αληθινές αξιολογήσεις από πελάτες μας στο Google",
+                en: "Real reviews from our customers on Google" },
+    // "See all reviews" target. Leave "" to fall back to the Google Maps pin
+    // (built from contact.mapQuery). The feed can also set it per-refresh via
+    // the GOOGLE_REVIEWS_PAGE_URL environment variable.
+    reviewsPageUrl: ""
   },
 
   /* --- 13. SOCIAL LINKS ---------------------------------------------------- */
@@ -221,11 +215,10 @@ const SITE_CONFIG = {
      profile, where visitors see his stories natively at the top.              */
   instagram: {
     enabled:  true,
-    handle:   "straight_razors_co_2019",
     url:      "https://www.instagram.com/straight_razors_co_2019/?hl=el",
     title:    { el: "Οι δουλειές μας στο Instagram", en: "Our work on Instagram" },
-    subtitle: { el: "Δείτε μερικές από τις τελευταίες δουλειές μας",
-                en: "See some of our latest work" },
+    // handle + subtitle intentionally omitted — the title + gallery + button
+    // carry the section on their own (cleaner header).
     ctaText:  { el: "Δείτε ολόκληρο το προφίλ στο Instagram",
                 en: "See the full profile on Instagram" },
 
