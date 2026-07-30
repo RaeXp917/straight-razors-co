@@ -171,32 +171,40 @@ const SITE_CONFIG = {
   /* --- 13. SOCIAL LINKS ---------------------------------------------------- */
   social: {
     facebook:  "https://www.facebook.com/p/Straight-Razors-Co-100063091996934/?locale=el_GR",
-    instagram: "https://www.instagram.com/straight_razors_co/",
+    instagram: "https://www.instagram.com/straight_razors_co_2019/",
     tiktok:    "",
     website:   ""
   },
 
-  /* --- 14. INSTAGRAM FEED (live, scrollable grid) --------------------------
-     Adds an on-page section: a live grid of the latest Instagram posts + a
-     "Follow us on Instagram" button.
+  /* --- 14. INSTAGRAM FEED (shows real posts IN the page) -------------------
+     The section can display his posts three ways (checked in this order):
 
-     ▶ To turn the LIVE GRID on (free, ~2 min):
-        1. Sign up at a widget provider and connect @straight_razors_co:
-             • SnapWidget  → https://snapwidget.com    (easiest — a plain <iframe>)
-             • Behold      → https://behold.so
-             • LightWidget → https://lightwidget.com
-        2. Copy the embed snippet it gives you.
-        3. Paste the WHOLE snippet between the backticks of `embedHtml` below.
-     Until you do, the section shows just the Follow button (which fully works).
+     (A) POSTS you list  → `posts: [...]`  ◀ INSTANT, NO SIGNUP, RECOMMENDED
+         Paste a few post/reel links (open the post on Instagram → Share →
+         Copy link). Each renders as a real, scrollable Instagram card right on
+         the page. Downside: it shows the posts you list (doesn't auto-update).
 
-     NOTE on STORIES: Instagram does NOT allow stories to be embedded on a
-     website (they're private to Instagram's app/API). The Follow button opens
-     his profile, where visitors see his stories natively at the very top.     */
+     (B) AUTO-UPDATING GRID → `embedHtml: \`...\``  (free, ~2 min signup)
+         Sign up at a widget provider, connect @straight_razors_co_2019, and
+         paste the whole embed snippet between the backticks:
+             • SnapWidget → https://snapwidget.com  (easiest — a plain <iframe>)
+             • Behold → https://behold.so   • LightWidget → https://lightwidget.com
+         Shows the latest posts automatically as he posts. Takes priority over (A).
+
+     (C) Neither set → a "Follow on Instagram" button (still fully works).
+
+     STORIES: Instagram does NOT allow stories to be embedded on any website
+     (app/API-only, and they vanish in 24h). The Follow button opens his
+     profile, where visitors see his stories natively at the top.              */
   instagram: {
     enabled:  true,
-    handle:   "straight_razors_co",
-    url:      "https://www.instagram.com/straight_razors_co/",
-    // Paste the widget provider's full embed snippet here (keep the backticks):
+    handle:   "straight_razors_co_2019",
+    url:      "https://www.instagram.com/straight_razors_co_2019/",
+    // (A) INSTANT: paste his post/reel links here, e.g.
+    //   "https://www.instagram.com/p/XXXXXXXXX/",
+    //   "https://www.instagram.com/reel/YYYYYYYYY/",
+    posts: [],
+    // (B) Optional auto-updating widget snippet (keep the backticks):
     embedHtml: ``
   }
 };

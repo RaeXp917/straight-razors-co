@@ -431,22 +431,42 @@
     if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process();
   }
 
+  // Load Instagram's official embed library once, then (re)render any
+  // blockquote.instagram-media on the page into real post cards.
+  function processInstagramPosts() {
+    const run = () => { if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process(); };
+    if (document.getElementById("ig-embed-js")) { run(); return; }
+    const s = document.createElement("script");
+    s.id = "ig-embed-js"; s.async = true; s.src = "https://www.instagram.com/embed.js";
+    s.onload = run;
+    document.body.appendChild(s);
+  }
+
   function renderInstagram(ig) {
     ig = ig || {};
     const handle = String(ig.handle || "").replace(/^@/, "");
     const url = ig.url || (handle ? `https://www.instagram.com/${handle}/` : "");
-    if (!url && !ig.embedHtml) return null;             // nothing to link to
+    const posts = Array.isArray(ig.posts) ? ig.posts.map((p) => (typeof p === "string" ? p : (p && p.url) || "")).filter(Boolean) : [];
+    if (!url && !ig.embedHtml && !posts.length) return null;   // nothing to show
     const title = sectionLabel("instagram", ig);
     const at = handle ? "@" + handle : "";
     const sub = t(ig.subtitle) || ui("ig_subtitle");
     const follow = url
       ? `<a class="btn btn-accent ig-follow" href="${url}" target="_blank" rel="noopener">${icon("instagram")}<span>${escapeHtml(ui("ig_follow"))}</span></a>`
       : "";
-    // With a widget snippet → a live scrollable feed; without → a clean CTA card
-    // that still links straight to the profile (stories included, natively).
-    const feed = ig.embedHtml
-      ? `<div class="ig-embed"></div>`
-      : (url ? `<a class="ig-card" href="${url}" target="_blank" rel="noopener">${icon("instagram")}${at ? `<span>${escapeHtml(at)}</span>` : ""}</a>` : "");
+    // Feed priority: a widget snippet (auto-updating grid) → official post embeds
+    // (a real in-page, scrollable strip of the posts you list) → a CTA card that
+    // links to the profile. Stories are never embeddable — the button opens IG.
+    let feed;
+    if (ig.embedHtml) {
+      feed = `<div class="ig-embed"></div>`;
+    } else if (posts.length) {
+      const cards = posts.map((permalink) =>
+        `<blockquote class="instagram-media" data-instgrm-permalink="${escapeHtml(permalink)}" data-instgrm-version="14"></blockquote>`).join("");
+      feed = `<div class="ig-posts">${cards}</div>`;
+    } else {
+      feed = url ? `<a class="ig-card" href="${url}" target="_blank" rel="noopener">${icon("instagram")}${at ? `<span>${escapeHtml(at)}</span>` : ""}</a>` : "";
+    }
     const inner = `
       <div class="ig-head">
         ${at ? `<p class="ig-handle">${escapeHtml(at)}</p>` : ""}
@@ -456,6 +476,7 @@
       ${follow ? `<div class="ig-cta">${follow}</div>` : ""}`;
     const sec = titledSection("instagram", title, inner, "instagram-section");
     if (ig.embedHtml) injectEmbed(sec.querySelector(".ig-embed"), ig.embedHtml);
+    else if (posts.length) processInstagramPosts();
     return sec;
   }
 
