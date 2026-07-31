@@ -436,6 +436,7 @@
     const summaryBox = sec.querySelector(".reviews-summary-slot");
     const grid = sec.querySelector(".reviews-grid");
     const foot = sec.querySelector(".reviews-foot");
+    const ctaSlot = sec.querySelector(".reviews-cta-slot");
     const cfgUrl = tx(ts && ts.reviewsPageUrl) || "";
     const cfgSummary = ts && ts.summary;
     const staticItems = (ts && Array.isArray(ts.items) ? ts.items : []).map(normalizeItem).slice(0, 6);
@@ -453,7 +454,10 @@
         grid.classList.add("is-empty");
         grid.innerHTML = "";
       }
-      foot.innerHTML = (noteHtml || "") + seeAll(url);
+      // Button sits directly below the heading; the note (dormant live path)
+      // stays at the bottom, and its slot collapses when empty.
+      if (ctaSlot) ctaSlot.innerHTML = seeAll(url);
+      foot.innerHTML = (noteHtml || "");
     };
     // Static fallback (no live API data): real overall rating + any curated
     // cards from config. Never invents reviews.
@@ -489,7 +493,12 @@
           <div class="rv-id"><span class="sk sk-line sk-name"></span><span class="sk sk-line sk-stars"></span></div></div>
         <span class="sk sk-line"></span><span class="sk sk-line"></span><span class="sk sk-line sk-short"></span>
       </div>`).join("");
+    // Order (below the heading): (1) Google button, (2) subtitle line,
+    // (3) rating summary, (4) review cards grid. The button is injected into
+    // .reviews-cta-slot by paint(); the bottom .reviews-foot only carries the
+    // (dormant) live-reviews note and collapses when empty.
     const inner = `
+      <div class="reviews-cta-slot"></div>
       ${subtitle ? `<p class="reviews-sub">${escapeHtml(subtitle)}</p>` : ""}
       <div class="reviews-summary-slot"></div>
       <div class="reviews-grid" aria-live="polite" aria-busy="true">${skeleton}</div>

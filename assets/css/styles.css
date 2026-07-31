@@ -411,7 +411,10 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 .ba-label { text-align: center; color: var(--muted); font-size: .95rem; margin-top: 12px; }
 
 /* ---------- Reviews / testimonials (live Google reviews) ---------- */
-.reviews-sub { text-align: center; color: var(--muted); margin: -28px 0 26px; font-size: 1.05rem; }
+/* Google reviews button — sits directly under the heading, above the subtitle */
+.reviews-cta-slot { display: flex; justify-content: center; margin: -20px 0 26px; }
+.reviews-cta-slot:empty { display: none; }
+.reviews-sub { text-align: center; color: var(--muted); margin: 0 0 26px; font-size: 1.05rem; }
 .reviews-summary-slot:empty { display: none; }
 .reviews-summary { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin: 0 0 40px; }
 .reviews-score { font-size: 2.6rem; font-weight: 700; color: var(--accent); font-family: var(--font); line-height: 1; }
@@ -452,6 +455,7 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 
 /* filter disclosure + "see all on Google" link */
 .reviews-foot { text-align: center; margin-top: 34px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.reviews-foot:empty { display: none; }
 .reviews-note { color: var(--muted); font-size: .92rem; }
 .reviews-empty { color: var(--muted); text-align: center; font-size: 1.05rem; padding: 20px 0; }
 .reviews-all { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px;
