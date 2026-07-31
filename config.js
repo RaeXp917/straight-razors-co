@@ -98,12 +98,12 @@ const SITE_CONFIG = {
     // Mirrors the ΤΙΜΟΚΑΤΑΛΟΓΟΣ (price list) below, with prices shown on each
     // card. Keep the two in sync when prices change. (0.00€ = placeholders.)
     items: [
-      { icon: "scissors", name: { el: "Κούρεμα Ανδρικό", en: "Men's Haircut" },  price: "0.00€" },
-      { icon: "scissors", name: { el: "Κούρεμα Παιδικό", en: "Kids' Haircut" },  price: "0.00€" },
+      { icon: "scissors", name: { el: "Κούρεμα Ανδρικό", en: "Men's Haircut" },  price: "12.00€" },
+      { icon: "scissors", name: { el: "Κούρεμα Παιδικό", en: "Kids' Haircut" },  price: "10.00€" },
       { icon: "razor",    name: { el: "Τριμάρισμα Γενιού με Ξυράφι", en: "Beard Trim with Razor" }, price: "0.00€" },
-      { icon: "spray",    name: { el: "Αποτρίχωση Αυτιά & Μύτη με Κερί", en: "Ear & Nose Waxing" }, price: "0.00€" },
+      { icon: "spray",    name: { el: "Αποτρίχωση Αυτιά & Μύτη με Κερί", en: "Ear & Nose Waxing" }, price: "5.00€" },
       { icon: "razor",    name: { el: "Ξύρισμα Αγγλικού Τύπου", en: "English Shave" }, desc: { el: "Παραδοσιακό με Φαλτσέτα", en: "Traditional straight razor" }, price: "15.00€" },
-      { icon: "sparkles", name: { el: "Μάσκα Νεκράς Θάλασσας", en: "Dead Sea Mask" }, desc: { el: "Ενυδάτωση & θρέψη επιδερμίδας", en: "Hydrates & nourishes skin" }, price: "5.00€" },
+      { icon: "sparkles", name: { el: "Μάσκα Νεκράς Θάλασσας", en: "Dead Sea Mask" }, desc: { el: "Ενυδάτωση & θρέψη επιδερμίδας", en: "Hydrates & nourishes skin" }, price: "10.00€" },
       { icon: "droplet",  name: { el: "Το Δεύτερο Λούσιμο", en: "The Second Wash" }, price: "2.00€" },
       { icon: "star",     name: { el: "Γαμπριάτικο Πακέτο", en: "Groom's Package" }, desc: { el: "Όλο το πακέτο σε 2 ραντεβού", en: "Full package over 2 appointments" }, price: "50.00€" }
     ]
@@ -266,13 +266,13 @@ const SITE_CONFIG = {
     title: { el: "ΤΙΜΟΚΑΤΑΛΟΓΟΣ", en: "PRICE LIST" },
     logo: "logo.png",   // resolved from brand.assetsDir (the crest already in use)
     items: [
-      { name: { el: "Κούρεμα Ανδρικό", en: "Men's Haircut" },              price: "0.00€" },
-      { name: { el: "Κούρεμα Παιδικό", en: "Kids' Haircut" },              price: "0.00€" },
+      { name: { el: "Κούρεμα Ανδρικό", en: "Men's Haircut" },              price: "12.00€" },
+      { name: { el: "Κούρεμα Παιδικό", en: "Kids' Haircut" },              price: "10.00€" },
       { name: { el: "Τριμάρισμα Γενιού με Ξυράφι", en: "Beard Trim with Razor" }, price: "0.00€" },
-      { name: { el: "Αποτρίχωση Αυτιά & Μύτη με Κερί", en: "Ear & Nose Waxing" }, price: "0.00€" },
+      { name: { el: "Αποτρίχωση Αυτιά & Μύτη με Κερί", en: "Ear & Nose Waxing" }, price: "5.00€" },
       { name: { el: "Ξύρισμα Αγγλικού Τύπου (Παραδοσιακό με Φαλτσέτα)", en: "English Shave (traditional straight razor)" }, price: "15.00€" },
       { name: { el: "Περιποίηση SPA", en: "SPA Treatment" }, items: [
-        { name: { el: "Μάσκα Νεκράς Θάλασσας (Ενυδατώνει & Θρέφει την Επιδερμίδα)", en: "Dead Sea Mask (hydrates & nourishes the skin)" }, price: "5.00€" },
+        { name: { el: "Μάσκα Νεκράς Θάλασσας (Ενυδατώνει & Θρέφει την Επιδερμίδα)", en: "Dead Sea Mask (hydrates & nourishes the skin)" }, price: "10.00€" },
         { name: { el: "Το Δεύτερο Λούσιμο", en: "The Second Wash" },        price: "2.00€" }
       ] },
       // Package: the 50€ covers everything below (sub-items shown without a
