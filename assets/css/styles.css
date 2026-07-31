@@ -516,7 +516,16 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 .car-arrow:hover { background: var(--accent); color: #0B0B0C; transform: translateY(-2px); }
 .car-arrow svg.ic { width: 22px; height: 22px; }
 @media (max-width: 560px) {
-  .car-track .service-card { flex: 0 0 78%; padding: 30px 24px; }
+  /* Shorter, tighter cards so they fit the phone viewport without a tall
+     empty gap. Content is vertically centred so the shorter cards (1-line
+     name, no desc) don't look top-heavy next to the tallest one. */
+  .car-track { gap: 16px; padding: 6px 4px 12px; }
+  .car-track .service-card { flex: 0 0 78%; padding: 20px 18px;
+    display: flex; flex-direction: column; justify-content: center; }
+  .car-track .service-card .ico { margin-bottom: 8px; font-size: 2.1rem; }
+  .car-track .service-card .ico svg.ic { width: 38px; height: 38px; }
+  .car-track .service-card h3 { font-size: 1.12rem; margin-bottom: 4px; }
+  .car-track .service-card p { font-size: .88rem; margin-bottom: 8px; }
   .car-arrow { width: 40px; height: 40px; }
 }
 
@@ -588,6 +597,10 @@ a.product-card.brand-card { display: flex; flex-direction: column; text-decorati
 .ig-card svg.ic { width: 46px; height: 46px; color: var(--accent); }
 .ig-card span { font-weight: 600; }
 .ig-cta { text-align: center; margin-top: 28px; }
+/* Long CTA text must be allowed to wrap and never exceed its container, or the
+   nowrap .btn base rule makes this button wider than a phone screen (page-wide
+   horizontal overflow). */
+.ig-follow { white-space: normal; max-width: 100%; text-align: center; line-height: 1.25; }
 .ig-follow svg.ic { width: 20px; height: 20px; }
 /* Official post embeds → a premium horizontal carousel: one embed centered,
    prev/next peeking. We only size/frame the outer wrapper — the embed itself
@@ -636,14 +649,13 @@ a.product-card.brand-card { display: flex; flex-direction: column; text-decorati
   .ig-arrow { width: 42px; height: 42px; }
   .ig-prev { left: 6px; } .ig-next { right: 6px; }
 }
-@media (max-width: 600px) {    /* mobile: one at a time, swipe; arrows BENEATH */
-  .ig-carousel-wrap { max-width: 100%; padding: 0 0 58px; }
+@media (max-width: 600px) {    /* mobile: one at a time, swipe — no arrows */
+  .ig-carousel-wrap { max-width: 100%; padding: 0; }
   .ig-carousel { padding: 6px 16px; gap: 14px; }
   .ig-slide { flex: 0 0 calc(100% - 32px); max-width: calc(100% - 32px); }
   .ig-frame { padding: 8px; }
-  .ig-arrow { top: auto; bottom: 0; transform: none; width: 44px; height: 44px; }
-  .ig-prev { left: calc(50% - 54px); right: auto; }
-  .ig-next { right: calc(50% - 54px); left: auto; }
+  /* Arrows removed on touch — users swipe/drag horizontally; dots remain. */
+  .ig-arrow { display: none; }
   .ig-dots { margin-top: 14px; }
 }
 /* Automated JSON feed → a responsive grid of post thumbnails linking to IG. */
