@@ -100,7 +100,6 @@ const SITE_CONFIG = {
     items: [
       { icon: "scissors", name: { el: "Κούρεμα Ανδρικό", en: "Men's Haircut" },  price: "12.00€" },
       { icon: "scissors", name: { el: "Κούρεμα Παιδικό", en: "Kids' Haircut" },  price: "10.00€" },
-      { icon: "razor",    name: { el: "Τριμάρισμα Γενιού με Ξυράφι", en: "Beard Trim with Razor" }, price: "0.00€" },
       { icon: "spray",    name: { el: "Αποτρίχωση Αυτιά & Μύτη με Κερί", en: "Ear & Nose Waxing" }, price: "5.00€" },
       { icon: "razor",    name: { el: "Ξύρισμα Αγγλικού Τύπου", en: "English Shave" }, desc: { el: "Παραδοσιακό με Φαλτσέτα", en: "Traditional straight razor" }, price: "15.00€" },
       { icon: "sparkles", name: { el: "Μάσκα Νεκράς Θάλασσας", en: "Dead Sea Mask" }, desc: { el: "Ενυδάτωση & θρέψη επιδερμίδας", en: "Hydrates & nourishes skin" }, price: "10.00€" },
@@ -268,7 +267,6 @@ const SITE_CONFIG = {
     items: [
       { name: { el: "Κούρεμα Ανδρικό", en: "Men's Haircut" },              price: "12.00€" },
       { name: { el: "Κούρεμα Παιδικό", en: "Kids' Haircut" },              price: "10.00€" },
-      { name: { el: "Τριμάρισμα Γενιού με Ξυράφι", en: "Beard Trim with Razor" }, price: "0.00€" },
       { name: { el: "Αποτρίχωση Αυτιά & Μύτη με Κερί", en: "Ear & Nose Waxing" }, price: "5.00€" },
       { name: { el: "Ξύρισμα Αγγλικού Τύπου (Παραδοσιακό με Φαλτσέτα)", en: "English Shave (traditional straight razor)" }, price: "15.00€" },
       { name: { el: "Περιποίηση SPA", en: "SPA Treatment" }, items: [
