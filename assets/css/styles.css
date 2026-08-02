@@ -205,7 +205,7 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 /* ---------- Team ---------- */
 .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 26px; }
 .team-card {
-  text-align: center; background: var(--wood); border: 1px solid var(--line);
+  text-align: center; background: var(--surface); border: 1px solid var(--line);
   border-top: 2px solid var(--accent);                 /* matching gold-vein strip */
   border-radius: var(--radius); padding: 0; overflow: hidden; box-shadow: none;
   transition: transform .2s ease, border-color .2s ease;
@@ -217,15 +217,14 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
   width: 100%; height: auto; aspect-ratio: 4 / 5; margin: 0;
   object-fit: cover; display: block; border: 0; outline: 0;
 }
-/* name plate is the brand "wood/brown" tone; dark brown text keeps it readable */
+/* name plate matches the service cards: card surface + light text, gold accents */
 .team-info { padding: 16px 18px 20px; }
-.team-card h3 { font-size: 1.15rem;
-  color: color-mix(in srgb, var(--wood) 24%, #000); }
+.team-card h3 { font-size: 1.15rem; color: var(--primary); }
 .team-role { margin-top: 4px; font-size: .92rem; font-weight: 600; letter-spacing: .02em;
-  color: color-mix(in srgb, var(--wood) 42%, #000); }
-.team-ig { display: inline-flex; margin-top: 12px; color: color-mix(in srgb, var(--wood) 30%, #000);
+  color: var(--muted); }
+.team-ig { display: inline-flex; margin-top: 12px; color: var(--accent);
   transition: transform .2s ease, color .2s ease; }
-.team-ig:hover { transform: translateY(-2px); color: color-mix(in srgb, var(--wood) 55%, #000); }
+.team-ig:hover { transform: translateY(-2px); color: var(--primary); }
 .team-ig svg.ic { width: 24px; height: 24px; }
 
 /* ---------- Gallery ---------- */
