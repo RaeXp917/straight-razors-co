@@ -149,8 +149,7 @@ const SITE_CONFIG = {
       { name: { first: { el: "Τάσος", en: "Tasos" }, last: { el: "Μπουράκου", en: "Mpourakou" } },
         role: { el: "Κουρέας", en: "Employee Barber" },
         photo: "assets/img/tasos.png",
-        // Points to the shop profile until Tasos' own Instagram handle is known.
-        instagram: "https://www.instagram.com/straight_razors_co_2019/" }
+        instagram: "https://www.instagram.com/buri_the_barber/" }
     ]
   },
 
