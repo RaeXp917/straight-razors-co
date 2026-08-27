@@ -32,22 +32,26 @@ connect **@straight_razors_co**, copy the embed snippet, and paste it into
 ## Google reviews (live, automatic)
 
 The **reviews section**, the **hero badge** and the **about copy** all show the
-real Google rating + review count pulled from the **official Google Business
-Profile Reviews API** — no scraping, no widgets, no fake data, and no
-hard-coded numbers in `config.js`.
+real Google rating + review count pulled from the **official Google Places API
+(New)** — no scraping, no widgets, no fake data, and no hard-coded numbers in
+`config.js`.
 
 **How it works (fits GitHub Pages — a static host with no server):**
 
 1. A scheduled **GitHub Action** (`.github/workflows/reviews.yml`) runs every
-   **6 hours** (and on demand).
-2. It runs `scripts/fetch-google-reviews.mjs` **server-side**, using repo
-   secrets, to call the API and write `assets/data/reviews.json`.
-3. It commits that JSON, so GitHub Pages serves it. The browser only ever reads
-   that static file — **it never calls Google and never sees any secret.**
-4. The site shows the **six newest 4★/5★ reviews**, plus the real overall
-   rating + total review count (unfiltered, straight from the API). On any
-   failure it keeps the last cached results and links out to Google — never
-   invented testimonials.
+   **4 hours** (and on demand) — that is the cache/revalidation interval.
+2. It runs `scripts/fetch-google-reviews.mjs` **server-side**, using a
+   **Google Cloud API key** (a repo secret), and calls
+   `GET https://places.googleapis.com/v1/places/{PLACE_ID}` with
+   `X-Goog-FieldMask: rating,userRatingCount`. The Place ID comes from
+   `business.googlePlaceId` in `config.js` — the same ID the Maps links and the
+   "see all reviews" button use.
+3. It commits the result to `assets/data/reviews.json`, so GitHub Pages serves
+   it. The browser only ever reads that static file — **it never calls Google
+   and never sees the API key.**
+4. The reviews section renders the live `rating` + `userRatingCount` under the
+   Google button. On any failure it keeps the last cached values (stale-on-error)
+   and links out to Google — never invented data.
 
 **Setup — one time.** Add these as repository secrets
 (*Settings → Secrets and variables → Actions*). Names are documented in
@@ -55,21 +59,17 @@ hard-coded numbers in `config.js`.
 
 | Secret | Where to get it |
 | --- | --- |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google Cloud Console → **APIs & Services → Credentials** → OAuth client. |
-| `GOOGLE_REFRESH_TOKEN` | Run the OAuth consent flow once with scope `https://www.googleapis.com/auth/business.manage` and store the refresh token. |
-| `GOOGLE_BUSINESS_ACCOUNT_ID` | Business Profile API `accounts.list` → the number in `accounts/{id}`. |
-| `GOOGLE_BUSINESS_LOCATION_ID` | `accounts/{id}/locations.list` → the id in `locations/{id}`. |
+| `GOOGLE_API_KEY` | Google Cloud Console → **APIs & Services → Credentials** → create an API key. Enable the **Places API (New)** for the project and restrict the key to it. |
+| `GOOGLE_PLACE_ID` | *Optional* — leave unset; the script reads the canonical Place ID from `business.googlePlaceId` in `config.js`. |
 | `GOOGLE_REVIEWS_PAGE_URL` | *Optional* — public "see all reviews on Google" link. If unset, the site uses `business.reviewsPageUrl` in `config.js`. |
 
-You must also, in Google Cloud: create a project, **enable the Google Business
-Profile API**, and **request API access** (Google gates the Business Profile
-APIs — approval is required before calls succeed). Until the secrets exist, the
-Action skips quietly and the rating/count are simply not shown (no fake
-numbers), with a link to Google in the reviews section.
+Until `GOOGLE_API_KEY` exists, the Action skips quietly and the rating/count
+are simply not shown (no fake numbers), with a link to Google in the reviews
+section.
 
 Trigger the first refresh manually from the **Actions** tab → *Refresh Google
 reviews* → **Run workflow**. From then on, whenever Google's count changes
-(117 → 118 → …), the site updates automatically on the next scheduled run —
+(117 → 118 → …), the site updates automatically on the next 4-hour run —
 **no code edit or redeploy is ever needed to update the review count.**
 
 ## Google Maps links

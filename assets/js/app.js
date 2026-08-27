@@ -555,11 +555,22 @@
         const url = (data && data.reviewsPageUrl) || cfgUrl || mapsLink();
         const live = (data && Array.isArray(data.reviews) ? data.reviews : [])
           .filter((r) => clampRating(r.rating) >= 4).slice(0, 6);
-        // Live API data (if the cache is ever populated) takes priority.
-        if (!live.length) return fallbackStatic(url);
-        const summaryHtml = renderReviewsSummary(data.averageRating, data.totalReviewCount);
-        const note = `<p class="reviews-note">${escapeHtml(ui("reviews_filter_note"))}</p>`;
-        paint(live, summaryHtml, note, url);
+        const hasSummary = data && data.averageRating != null;
+        // Live rating + review count (from the server-side Google cache) always
+        // take priority — they render even when no individual cards exist.
+        if (hasSummary) {
+          const summaryHtml = renderReviewsSummary(data.averageRating, data.totalReviewCount);
+          const note = live.length ? `<p class="reviews-note">${escapeHtml(ui("reviews_filter_note"))}</p>` : "";
+          paint(live, summaryHtml, note, url);
+          return;
+        }
+        if (live.length) {
+          const note = `<p class="reviews-note">${escapeHtml(ui("reviews_filter_note"))}</p>`;
+          paint(live, "", note, url);
+          return;
+        }
+        // No live summary yet (API not configured): graceful static state.
+        return fallbackStatic(url);
       })
       .catch(() => fallbackStatic(cfgUrl || mapsLink()))
       .finally(() => clearTimeout(timer));
