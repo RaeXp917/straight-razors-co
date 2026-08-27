@@ -81,9 +81,39 @@
     for (let i = 0; i < 5; i++) out += `<span class="star${i < full ? " on" : ""}">${icon("star")}</span>`;
     return out;
   };
+  /* ---------- canonical business identity (single source of truth) ---------- */
+  // Everything Google-related (Maps link, embedded map, "see all reviews"
+  // button, live rating/count) derives from CFG.business. These getters keep
+  // older configs working as fallbacks.
+  const businessName = () => (CFG.business && CFG.business.name) || CFG.brand.name || "";
+  const businessPlaceId = () => (CFG.business && CFG.business.googlePlaceId) || "";
+  const businessLat = () => (CFG.business && CFG.business.latitude);
+  const businessLng = () => (CFG.business && CFG.business.longitude);
+  const businessAddress = () => (CFG.business && CFG.business.address) || (CFG.contact && CFG.contact.address) || "";
+  const businessReviewsUrl = () =>
+    (CFG.business && CFG.business.reviewsPageUrl) ||
+    (CFG.testimonials && CFG.testimonials.reviewsPageUrl) || "";
+  // Coordinates are ONLY a fallback — the Place ID is what pins the business.
+  const coordsFallback = () => {
+    if (businessLat() != null && businessLng() != null) return `${businessLat()},${businessLng()}`;
+    return (CFG.contact && CFG.contact.mapQuery) || businessAddress() || "Greece";
+  };
+  // "Open in Maps" link — targets the EXACT business profile via its Place ID
+  // (never a generic coordinate pin). Falls back to a coordinate query only if
+  // no Place ID is configured.
   const mapsLink = () => {
-    const q = encodeURIComponent((CFG.contact && (CFG.contact.mapQuery || CFG.contact.address)) || "");
-    return "https://www.google.com/maps/search/?api=1&query=" + q;
+    const pid = businessPlaceId();
+    if (pid) {
+      return "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(businessName() || "Greece") + "&query_place_id=" + encodeURIComponent(pid);
+    }
+    return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(coordsFallback());
+  };
+  // Embedded map iframe — also resolved via the Place ID when present.
+  const mapsEmbed = () => {
+    const pid = businessPlaceId();
+    if (pid) return "https://www.google.com/maps?q=" + encodeURIComponent("place_id:" + pid) + "&output=embed";
+    return "https://www.google.com/maps?q=" + encodeURIComponent(coordsFallback()) + "&output=embed";
   };
 
   /* The active blueprint's section order. */
@@ -150,11 +180,14 @@
     const demoTag = preset.demo && preset.demo.tagline;
     const title = t(h.title) || CFG.brand.name;
     const subtitle = t(h.subtitle) || t(CFG.brand.tagline) || t(demoTag) || "";
+    // {rating}/{count} tokens are filled with the live Google summary (see
+    // fillLiveTokens) — the hero never hard-codes the review count/rating.
+    const liveTokens = /\{rating\}|\{count\}/.test(subtitle);
     sec.innerHTML = `
       <div class="hero-overlay"></div>
       <div class="container hero-content">
         <h1>${escapeHtml(title)}</h1>
-        ${subtitle ? `<p>${escapeHtml(subtitle)}</p>` : ""}
+        ${subtitle ? `<p${liveTokens ? " data-live-tokens" : ""}>${escapeHtml(subtitle)}</p>` : ""}
         <div class="hero-cta"></div>
       </div>`;
     const cta = sec.querySelector(".hero-cta");
@@ -164,6 +197,7 @@
       call.href = telHref(CFG.contact.phone);
       cta.appendChild(call);
     }
+    if (liveTokens) fillLiveTokens(sec);
     // (No "Οδηγίες"/Directions button over the hero — removed by request. The
     //  Google map still lives in the bottom location section.)
     return sec;
@@ -173,21 +207,24 @@
     const title = sectionLabel("about", a);
     const text = t(a && a.text) || "";
     const logo = brandAsset("logo", CFG.brand.logo, "logo.png") || preset.icon;
-    // Turn the "5.0★" in the copy into a gold link to the shop's Google reviews
-    // (same target as the reviews section's "see all" button). escapeHtml runs
-    // first, then we swap in the anchor — so nothing else can inject markup.
+    // The "{rating}★" token is filled with the LIVE Google rating (same cache
+    // the reviews section uses) and links to the shop's Google reviews. No
+    // hard-coded number in the copy — until live data loads, the clause drops.
+    const hasRatingToken = /\{rating\}★/.test(text);
     let bodyHtml = escapeHtml(text);
-    if (bodyHtml.includes("5.0★")) {
-      const rlink = (CFG.testimonials && tx(CFG.testimonials.reviewsPageUrl)) || mapsLink();
-      bodyHtml = bodyHtml.replace("5.0★",
-        `<a class="about-rating" href="${escapeHtml(rlink)}" target="_blank" rel="noopener noreferrer">5.0★</a>`);
+    if (hasRatingToken) {
+      const rlink = businessReviewsUrl() || mapsLink();
+      bodyHtml = bodyHtml.replace("{rating}★",
+        `<a class="about-rating" href="${escapeHtml(rlink)}" target="_blank" rel="noopener noreferrer">{rating}★</a>`);
     }
     const inner = `
       <div class="about-grid">
-        <div class="about-text"><h2>${escapeHtml(title)}</h2>${text ? `<p>${bodyHtml}</p>` : ""}</div>
+        <div class="about-text"><h2>${escapeHtml(title)}</h2>${text ? `<p${hasRatingToken ? " data-live-tokens" : ""}>${bodyHtml}</p>` : ""}</div>
         <div class="about-badge">${iconMarkup(logo, preset.icon)}</div>
       </div>`;
-    return sectionEl("about", inner);
+    const sec = sectionEl("about", inner);
+    if (hasRatingToken) fillLiveTokens(sec);
+    return sec;
   }
 
   function renderServices(s) {
@@ -361,6 +398,51 @@
   const REVIEWS_URL = "assets/data/reviews.json";
   const clampRating = (n) => Math.max(0, Math.min(5, Math.round(Number(n) || 0)));
   const ratingAria = (n) => (lang === "en" ? `Rated ${n} out of 5 stars` : `Βαθμολογία ${n} στα 5 αστέρια`);
+  // Shared loader for the live Google cache (the GitHub Action writes this file
+  // from the official Business Profile API). Memoized so the hero + about +
+  // reviews section fetch it once per page load. No credentials are ever in the
+  // browser — it only reads a public, static JSON.
+  let _reviewsCache = null;
+  function loadReviewsCache() {
+    if (!_reviewsCache) {
+      const ctrl = ("AbortController" in window) ? new AbortController() : null;
+      const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, 8000);
+      _reviewsCache = fetch(REVIEWS_URL, { cache: "no-cache", signal: ctrl ? ctrl.signal : undefined })
+        .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+        .then((data) => {
+          if (!data || data.averageRating == null) throw new Error("no-summary");
+          return data;
+        })
+        .catch((err) => { _reviewsCache = null; throw err; })
+        .finally(() => clearTimeout(timer));
+    }
+    return _reviewsCache;
+  }
+  // Fill {rating}/{count} tokens in any element marked [data-live-tokens] with
+  // the live Google summary. When the live cache has no summary yet (API not
+  // configured), the rating/count clause is dropped instead of showing a
+  // hard-coded number.
+  function fillLiveTokens(root) {
+    const targets = Array.from((root || document).querySelectorAll("[data-live-tokens]"));
+    if (!targets.length) return;
+    loadReviewsCache()
+      .then((d) => {
+        const rating = Number(d.averageRating).toFixed(1);
+        const count = d.totalReviewCount != null ? String(d.totalReviewCount) : "";
+        targets.forEach((node) => {
+          node.innerHTML = node.innerHTML.replace(/\{rating\}/g, rating).replace(/\{count\}/g, count);
+        });
+      })
+      .catch(() => {
+        // Drop "★ {rating} με {count} κριτικές στο Google." (hero) and the
+        // "· βαθμολογία {rating}★ στο Google." clause (about).
+        const CLAUSE = /\s*★?\s*\{rating\}\s*(?:με|with)\s*\{count\}\s*(?:κριτικές στο Google\.|Google reviews\.)?/gi;
+        const SHORT = /\s*·?\s*(?:βαθμολογία|rated)\s*<a class="about-rating"[^>]*>\{rating\}★<\/a>\s*(?:στο Google\.|on Google\.)?/gi;
+        targets.forEach((node) => {
+          node.innerHTML = node.innerHTML.replace(CLAUSE, "").replace(SHORT, "").trim();
+        });
+      });
+  }
   function relTime(iso) {
     if (!iso) return "";
     const d = new Date(iso);
@@ -437,7 +519,7 @@
     const grid = sec.querySelector(".reviews-grid");
     const foot = sec.querySelector(".reviews-foot");
     const ctaSlot = sec.querySelector(".reviews-cta-slot");
-    const cfgUrl = tx(ts && ts.reviewsPageUrl) || "";
+    const cfgUrl = businessReviewsUrl() || "";
     const cfgSummary = ts && ts.summary;
     const staticItems = (ts && Array.isArray(ts.items) ? ts.items : []).map(normalizeItem).slice(0, 6);
     const seeAll = (url) => `<a class="reviews-all" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${icon("google")}<span>${escapeHtml(ui("reviews_see_all"))}</span></a>`;
@@ -550,7 +632,8 @@
     };
     if (c.phone)   row(icon("phone"), ui("phone"),   c.phone, telHref(c.phone));
     if (c.email)   row(icon("mail"),  ui("email"),   c.email, "mailto:" + c.email);
-    if (c.address) row(icon("pin"),   ui("address"), c.address, mapsLink());
+    const addr = businessAddress();
+    if (addr) row(icon("pin"),   ui("address"), addr, mapsLink());
 
     const hb = sec.querySelector("#hoursBlock");
     if (CFG.hours && CFG.hours.enabled !== false && CFG.hours.days) {
@@ -566,8 +649,7 @@
       wa.href = "https://wa.me/" + c.whatsapp.replace(/[^\d]/g, "");
       wa.target = "_blank"; wa.rel = "noopener"; btns.appendChild(wa);
     }
-    const q = encodeURIComponent(c.mapQuery || c.address || "Greece");
-    sec.querySelector("iframe").src = "https://www.google.com/maps?q=" + q + "&output=embed";
+    sec.querySelector("iframe").src = mapsEmbed();
     return sec;
   }
 
@@ -753,9 +835,10 @@
       rows.push(`<li><span class="ci">${icon("mail")}</span><span><span class="cl">${ui("email")}</span><br>` +
         `<a class="cv" href="mailto:${escapeHtml(c.email)}">${escapeHtml(c.email)}</a></span></li>`);
     }
-    if (c.address) {
+    const addr = businessAddress();
+    if (addr) {
       rows.push(`<li><span class="ci">${icon("pin")}</span><span><span class="cl">${ui("address")}</span><br>` +
-        `<a class="cv" href="${mapsLink()}" target="_blank" rel="noopener">${escapeHtml(c.address)}</a></span></li>`);
+        `<a class="cv" href="${mapsLink()}" target="_blank" rel="noopener">${escapeHtml(addr)}</a></span></li>`);
     }
     const contactList = rows.length ? `<ul class="contact-list loc-list">${rows.join("")}</ul>` : "";
 
@@ -766,8 +849,9 @@
         `</div>`;
     }
 
-    const q = encodeURIComponent(c.mapQuery || c.address || "Greece");
-    const mapBlock = `<div class="loc-col loc-map"><iframe title="map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${q}&output=embed"></iframe></div>`;
+    // Embedded map resolved through the business Place ID (see mapsEmbed) so it
+    // pins the actual business, not a generic coordinate.
+    const mapBlock = `<div class="loc-col loc-map"><iframe title="map" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="${mapsEmbed()}"></iframe></div>`;
 
     const pl = CFG.priceList || {};
     const priceBlock = (pl.items && pl.items.length)

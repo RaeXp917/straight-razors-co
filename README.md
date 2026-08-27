@@ -31,13 +31,15 @@ connect **@straight_razors_co**, copy the embed snippet, and paste it into
 
 ## Google reviews (live, automatic)
 
-The **reviews section** shows real Google reviews pulled from the **official
-Google Business Profile Reviews API** — no scraping, no widgets, no fake data.
+The **reviews section**, the **hero badge** and the **about copy** all show the
+real Google rating + review count pulled from the **official Google Business
+Profile Reviews API** — no scraping, no widgets, no fake data, and no
+hard-coded numbers in `config.js`.
 
 **How it works (fits GitHub Pages — a static host with no server):**
 
 1. A scheduled **GitHub Action** (`.github/workflows/reviews.yml`) runs every
-   6 hours (and on demand).
+   **6 hours** (and on demand).
 2. It runs `scripts/fetch-google-reviews.mjs` **server-side**, using repo
    secrets, to call the API and write `assets/data/reviews.json`.
 3. It commits that JSON, so GitHub Pages serves it. The browser only ever reads
@@ -57,16 +59,26 @@ Google Business Profile Reviews API** — no scraping, no widgets, no fake data.
 | `GOOGLE_REFRESH_TOKEN` | Run the OAuth consent flow once with scope `https://www.googleapis.com/auth/business.manage` and store the refresh token. |
 | `GOOGLE_BUSINESS_ACCOUNT_ID` | Business Profile API `accounts.list` → the number in `accounts/{id}`. |
 | `GOOGLE_BUSINESS_LOCATION_ID` | `accounts/{id}/locations.list` → the id in `locations/{id}`. |
-| `GOOGLE_REVIEWS_PAGE_URL` | Public "see all reviews on Google" link for the button. |
+| `GOOGLE_REVIEWS_PAGE_URL` | *Optional* — public "see all reviews on Google" link. If unset, the site uses `business.reviewsPageUrl` in `config.js`. |
 
 You must also, in Google Cloud: create a project, **enable the Google Business
 Profile API**, and **request API access** (Google gates the Business Profile
 APIs — approval is required before calls succeed). Until the secrets exist, the
-Action skips quietly and the section shows a tasteful "no reviews yet" state
-with a link to Google (no placeholder/fake reviews).
+Action skips quietly and the rating/count are simply not shown (no fake
+numbers), with a link to Google in the reviews section.
 
 Trigger the first refresh manually from the **Actions** tab → *Refresh Google
-reviews* → **Run workflow**.
+reviews* → **Run workflow**. From then on, whenever Google's count changes
+(117 → 118 → …), the site updates automatically on the next scheduled run —
+**no code edit or redeploy is ever needed to update the review count.**
+
+## Google Maps links
+
+The "Open in Maps" button, the embedded map and the reviews button are all
+derived from the canonical **`business` block in `config.js`** — one source of
+truth. `googlePlaceId` is what makes Maps open the exact **Straight Razors Co**
+business profile (it is *not* a coordinate pin); latitude/longitude are only a
+fallback and must match the same profile.
 
 ## Local preview
 

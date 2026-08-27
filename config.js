@@ -43,13 +43,28 @@ const SITE_CONFIG = {
     dark:      true
   },
 
+  /* --- 4b. BUSINESS IDENTITY (canonical — EVERYTHING Google derives from here) -
+     The "Open in Maps" button, the embedded map, the Google rating/review count
+     and the "see all reviews" button all come from this single block.
+     • googlePlaceId  → what makes Maps open the EXACT business profile (not a
+       raw coordinate pin). Keep it accurate.
+     • latitude/longitude → used only as a fallback / map viewport (must match
+       the same business profile).                                       */
+  business: {
+    name: "Straight razors Co",
+    googlePlaceId: "/g/11h9k_sf7z",
+    latitude:  40.2990406,
+    longitude: 21.7968016,
+    address:   "11ης Οκτωβρίου 41Α, Άγιος Χριστόφορος, Κοζάνη 501 00",
+    // Public "see all reviews on Google" link (reviews button + about link).
+    reviewsPageUrl: "https://www.google.com/maps/place/Straight+razors+Co/@40.2990406,21.7968016,17z/data=!4m8!3m7!1s0x1359d359ee378f67:0xd4e10d8dcd44d1e!8m2!3d40.2990406!4d21.7968016!9m1!1b1!16s%2Fg%2F11h9k_sf7z"
+  },
+
   /* --- 5. CONTACT ---------------------------------------------------------- */
   contact: {
     phone:    "+30 2461 022648",
     whatsapp: "",                                  // no WhatsApp listed
-    email:    "",                                  // none listed
-    address:  "11ης Οκτωβρίου 41Α, Άγιος Χριστόφορος, Κοζάνη 501 00",
-    mapQuery: "40.2991079,21.796646"               // exact coordinates → correct pin
+    email:    ""                                   // none listed
   },
 
   /* --- 6. OPENING HOURS ---------------------------------------------------- */
@@ -74,8 +89,11 @@ const SITE_CONFIG = {
       en: "Straight Razors Co"
     },
     subtitle: {
-      el: "★ 5.0 με 117 κριτικές στο Google. Η φροντίδα σας είναι η προτεραιότητά μας.",
-      en: "★ 5.0 with 117 Google reviews. Your care is our priority."
+      // {rating} / {count} are filled LIVE from the Google reviews cache
+      // (assets/data/reviews.json, refreshed by the GitHub Action). Never
+      // hard-coded — see README → "Google reviews".
+      el: "★ {rating} με {count} κριτικές στο Google. Η φροντίδα σας είναι η προτεραιότητά μας.",
+      en: "★ {rating} with {count} Google reviews. Your care is our priority."
     },
     ctaText: { el: "Καλέστε μας", en: "Call us" }
   },
@@ -85,8 +103,8 @@ const SITE_CONFIG = {
     enabled: true,
     title: { el: "Σχετικά με εμάς", en: "About us" },
     text: {
-      el: "Στο Straight Razors Co προσφέρουμε επαγγελματικό κούρεμα, ξύρισμα και περιποίηση για άντρες και παιδιά, σε έναν καθαρό χώρο με σεβασμό στην υγιεινή. Ευγενικό & έμπειρο προσωπικό, βαθμολογία 5.0★ από τους πελάτες μας.",
-      en: "At Straight Razors Co we offer professional haircuts, shaves and grooming for men and kids, in a clean space with strict hygiene. Polite, experienced staff and a 5.0★ customer rating."
+      el: "Στο Straight Razors Co προσφέρουμε επαγγελματικό κούρεμα, ξύρισμα και περιποίηση για άντρες και παιδιά, σε έναν καθαρό χώρο με σεβασμό στην υγιεινή. Ευγενικό & έμπειρο προσωπικό · βαθμολογία {rating}★ στο Google.",
+      en: "At Straight Razors Co we offer professional haircuts, shaves and grooming for men and kids, in a clean space with strict hygiene. Polite, experienced staff · rated {rating}★ on Google."
     }
   },
 
@@ -168,31 +186,31 @@ const SITE_CONFIG = {
   },
 
   /* --- 12. REVIEWS / TESTIMONIALS -----------------------------------------
-     No API, no login, no fake reviews. Right now this shows the REAL overall
-     Google rating (`summary`) + a button to the shop's Google page.
+     The overall Google RATING + REVIEW COUNT are NOT stored here — they come
+     LIVE from assets/data/reviews.json, which the scheduled GitHub Action fills
+     from the official Google Business Profile API (see README → "Google
+     reviews"). The site NEVER hard-codes the count, so it always matches Google
+     without any code edit.
 
-     To show individual review CARDS, paste real reviews into `items` below
-     (author = the reviewer's first name, quote = their words, rating = stars).
-     They render instantly — no tech setup.
+     This block only controls the section copy. To also show individual review
+     CARDS, paste real reviews into `items` below (author = the reviewer's first
+     name, quote = their words, rating = stars).
 
-     OPTIONAL / DORMANT: the official Google Business Profile API pipeline is
-     already built (GitHub Action + assets/data/reviews.json). If that cache is
-     ever populated with live reviews it AUTOMATICALLY takes priority over the
-     static content here. Setup steps live in README.md → "Google reviews".    */
+     If the live cache is ever populated with reviews, it AUTOMATICALLY takes
+     priority over `items` here. The "see all reviews" button URL lives in
+     business.reviewsPageUrl (canonical), so it stays in sync with the Maps
+     links. Until the API secrets are set, the section shows a tasteful
+     "no reviews yet" state with a link to Google — never invented numbers.  */
   testimonials: {
     enabled: true,
     title:    { el: "Δεν πιστεύετε εμάς; Πιστέψτε τους πελάτες μας!",
                 en: "Don't believe us? Trust our customers!" },
     subtitle: { el: "Αληθινές αξιολογήσεις από πελάτες μας στο Google",
                 en: "Real reviews from our customers on Google" },
-    // Real Google rating for the shop (matches the 117 reviews on the profile).
-    summary: { rating: "5.0", count: 117 },
     // Paste real review cards here whenever you have them, e.g.:
     //   { author: "Γιώργος", rating: 5,
     //     quote: { el: "Το καλύτερο κούρεμα...", en: "The best haircut..." } }
-    items: [],
-    // "See all reviews" button → opens the shop's Google reviews list directly.
-    reviewsPageUrl: "https://www.google.com/maps/place/Straight+razors+Co/@40.2991079,21.796646,17z/data=!4m8!3m7!1s0x1359d359ee378f67:0xd4e10d8dcd44d1e!8m2!3d40.2991079!4d21.796646!9m1!1b1!16s%2Fg%2F11h9k_sf7z"
+    items: []
   },
 
   /* --- 13. SOCIAL LINKS ---------------------------------------------------- */
