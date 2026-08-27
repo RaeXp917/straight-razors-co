@@ -93,6 +93,10 @@
   const businessReviewsUrl = () =>
     (CFG.business && CFG.business.reviewsPageUrl) ||
     (CFG.testimonials && CFG.testimonials.reviewsPageUrl) || "";
+  // Maps Embed API key — SAFE for browsers (it must be restricted to the Maps
+  // Embed API + this site's referrers in Google Cloud Console). Never a server
+  // credential; the Places API key stays server-side only.
+  const mapsEmbedKey = () => (CFG.google && CFG.google.mapsEmbedKey) || "";
   // Coordinates are ONLY a fallback — the Place ID is what pins the business.
   const coordsFallback = () => {
     if (businessLat() != null && businessLng() != null) return `${businessLat()},${businessLng()}`;
@@ -109,11 +113,24 @@
     }
     return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(coordsFallback());
   };
-  // Embedded map iframe — also resolved via the Place ID when present.
+  // Embedded map iframe.
+  //   • With a browser-safe Maps Embed key → official Maps Embed API in `place`
+  //     mode, which requires the Place ID passed with the `place_id:` prefix:
+  //       https://www.google.com/maps/embed/v1/place?key=...&q=place_id:<PLACE_ID>
+  //   • Without a key (the default — free, no paid calls) → the keyless Maps
+  //     embed resolved by business name + address, which centers on the exact
+  //     business with its marker. The keyless endpoint does NOT support
+  //     `place_id:` prefixes (that yields an empty world view), so the name
+  //     query is used instead. Coordinates are the last-resort fallback.
   const mapsEmbed = () => {
     const pid = businessPlaceId();
-    if (pid) return "https://www.google.com/maps?q=" + encodeURIComponent("place_id:" + pid) + "&output=embed";
-    return "https://www.google.com/maps?q=" + encodeURIComponent(coordsFallback()) + "&output=embed";
+    const key = mapsEmbedKey();
+    if (pid && key) {
+      return "https://www.google.com/maps/embed/v1/place?key=" + encodeURIComponent(key) +
+        "&q=" + encodeURIComponent("place_id:" + pid);
+    }
+    const q = (businessName() || "") + (businessAddress() ? ", " + businessAddress() : "");
+    return "https://www.google.com/maps?q=" + encodeURIComponent(q || coordsFallback()) + "&output=embed";
   };
 
   /* The active blueprint's section order. */

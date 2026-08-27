@@ -74,11 +74,37 @@ reviews* → **Run workflow**. From then on, whenever Google's count changes
 
 ## Google Maps links
 
-The "Open in Maps" button, the embedded map and the reviews button are all
-derived from the canonical **`business` block in `config.js`** — one source of
-truth. `googlePlaceId` is what makes Maps open the exact **Straight Razors Co**
-business profile (it is *not* a coordinate pin); latitude/longitude are only a
-fallback and must match the same profile.
+The "Open in Maps" button, the embedded map, the review button and the Places
+API fetch all derive from the canonical **`business` block in `config.js`** —
+one source of truth. `googlePlaceId` is the **Google Places API Place ID**
+(`ChIJZ4837lnTWRMRHk3U3NgQTg0`). Each Google endpoint uses its own URL syntax
+but shares that one ID:
+
+| Use | URL |
+| --- | --- |
+| Places API (rating/count, server-side) | `https://places.googleapis.com/v1/places/ChIJZ4837lnTWRMRHk3U3NgQTg0` |
+| Embedded map (Maps Embed API, `place` mode) | `https://www.google.com/maps/embed/v1/place?key=…&q=place_id:ChIJZ4837lnTWRMRHk3U3NgQTg0` |
+| "Open in Maps" + "see all reviews" | `https://www.google.com/maps/search/?api=1&query=Straight+razors+Co&query_place_id=ChIJZ4837lnTWRMRHk3U3NgQTg0` |
+
+The embedded map is **free and needs no key by default**: the site uses the
+keyless Maps embed resolved by the business name + address, which centers on
+the exact **Straight Razors Co** listing with its marker (never an empty world
+view). It also supports the official **Maps Embed API in `place` mode** as an
+opt-in: set a browser-safe key in `config.js` → `google.mapsEmbedKey` (this key
+is *not* a secret — it is designed for the browser, restricted by HTTP
+referrer):
+
+1. Google Cloud Console → **APIs & Services → Credentials** → create an API key.
+2. Restrict it to the **Maps Embed API** and to your site's HTTP referrer(s)
+   (e.g. `https://raexp917.github.io/*` and `http://localhost:*/`).
+3. Paste it into `google.mapsEmbedKey` in `config.js`.
+
+With that key the iframe becomes
+`https://www.google.com/maps/embed/v1/place?key=…&q=place_id:ChIJZ4837lnTWRMRHk3U3NgQTg0`
+(exact place-mode embed). Without it, the keyless name/address embed is used —
+either way the map shows the business, and no paid call is ever made from the
+browser. The server-side Places API refresh (a few calls a day) stays well
+inside the free tier.
 
 ## Local preview
 

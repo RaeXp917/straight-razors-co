@@ -46,18 +46,34 @@ const SITE_CONFIG = {
   /* --- 4b. BUSINESS IDENTITY (canonical — EVERYTHING Google derives from here) -
      The "Open in Maps" button, the embedded map, the Google rating/review count
      and the "see all reviews" button all come from this single block.
-     • googlePlaceId  → what makes Maps open the EXACT business profile (not a
-       raw coordinate pin). Keep it accurate.
+     • googlePlaceId  → the GOOGLE PLACES API Place ID. It is the single source
+       of truth: the Places API fetch, the Maps Embed, the "Open in Maps" link
+       and the review button all resolve from it (each endpoint has its own URL
+       syntax, but they share this one ID). Keep it accurate.
      • latitude/longitude → used only as a fallback / map viewport (must match
        the same business profile).                                       */
   business: {
     name: "Straight razors Co",
-    googlePlaceId: "/g/11h9k_sf7z",
+    googlePlaceId: "ChIJZ4837lnTWRMRHk3U3NgQTg0",
     latitude:  40.2990406,
     longitude: 21.7968016,
     address:   "11ης Οκτωβρίου 41Α, Άγιος Χριστόφορος, Κοζάνη 501 00",
-    // Public "see all reviews on Google" link (reviews button + about link).
-    reviewsPageUrl: "https://www.google.com/maps/place/Straight+razors+Co/@40.2990406,21.7968016,17z/data=!4m8!3m7!1s0x1359d359ee378f67:0xd4e10d8dcd44d1e!8m2!3d40.2990406!4d21.7968016!9m1!1b1!16s%2Fg%2F11h9k_sf7z"
+    // Public "see all reviews on Google" link (reviews button + about link) —
+    // opens the exact business listing via the same Place ID.
+    reviewsPageUrl: "https://www.google.com/maps/search/?api=1&query=Straight+razors+Co&query_place_id=ChIJZ4837lnTWRMRHk3U3NgQTg0"
+  },
+
+  /* --- 4c. GOOGLE CLIENT KEYS ------------------------------------------------
+     Only keys that are SAFE for browsers live here (see each comment). Private
+     / server-side credentials NEVER belong in config.js — they stay in GitHub
+     Actions secrets and are used only by scripts/.                        */
+  google: {
+    // Maps Embed API key for the embedded map (iframe). This key is designed
+    // for browser use: create it in Google Cloud Console and RESTRICT it to the
+    // "Maps Embed API" + your site's HTTP referrer(s). With it, the iframe uses
+    // official place-mode embeds; WITHOUT it the map still works via the free
+    // keyless embed (business name + address — no key, no paid calls).
+    mapsEmbedKey: ""
   },
 
   /* --- 5. CONTACT ---------------------------------------------------------- */
