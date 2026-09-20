@@ -86,14 +86,15 @@ const SITE_CONFIG = {
   /* --- 6. OPENING HOURS ---------------------------------------------------- */
   hours: {
     enabled: true,
+    timezone: "Europe/Athens",
     days: [
-      { el: "Δευτέρα",    en: "Monday",    open: "Κλειστά / Closed" },
-      { el: "Τρίτη",      en: "Tuesday",   open: "10:00 έως 21:00" },
-      { el: "Τετάρτη",    en: "Wednesday", open: "10:00 έως 21:00" },
-      { el: "Πέμπτη",     en: "Thursday",  open: "10:00 έως 21:00" },
-      { el: "Παρασκευή",  en: "Friday",    open: "10:00 έως 21:00" },
-      { el: "Σάββατο",    en: "Saturday",  open: "09:00 έως 17:00" },
-      { el: "Κυριακή",    en: "Sunday",    open: "Κλειστά / Closed" }
+      { key: "monday",    el: "Δευτέρα",    en: "Monday",    closed: true },
+      { key: "tuesday",   el: "Τρίτη",      en: "Tuesday",   open: { el: "10:00 – 21:00", en: "10:00 – 21:00" } },
+      { key: "wednesday", el: "Τετάρτη",    en: "Wednesday", open: { el: "10:00 – 21:00", en: "10:00 – 21:00" } },
+      { key: "thursday",  el: "Πέμπτη",     en: "Thursday",  open: { el: "10:00 – 21:00", en: "10:00 – 21:00" } },
+      { key: "friday",    el: "Παρασκευή",  en: "Friday",    open: { el: "10:00 – 21:00", en: "10:00 – 21:00" } },
+      { key: "saturday",  el: "Σάββατο",    en: "Saturday",  open: { el: "09:00 – 17:00", en: "09:00 – 17:00" } },
+      { key: "sunday",    el: "Κυριακή",    en: "Sunday",    closed: true }
     ]
   },
 
@@ -291,8 +292,8 @@ const SITE_CONFIG = {
   /* --- 15. PRICE LIST (ΤΙΜΟΚΑΤΑΛΟΓΟΣ) — shown after the store hours ---------
      Brand logo on the left, the priced list on the right. Prices are free text
      ("15.00€", "από 10€", …). An item with a nested `items:[]` becomes a group
-     heading with indented sub-rows (e.g. the SPA package). The 0.00€ values are
-     placeholders from your example — replace with the real prices anytime.    */
+     heading with indented sub-rows. The 0.00€ values are placeholders from your
+     example — replace with the real prices anytime.                            */
   priceList: {
     enabled: true,
     title: { el: "ΤΙΜΟΚΑΤΑΛΟΓΟΣ", en: "PRICE LIST" },
@@ -302,10 +303,8 @@ const SITE_CONFIG = {
       { name: { el: "Κούρεμα Παιδικό", en: "Kids' Haircut" },              price: "10.00€" },
       { name: { el: "Αποτρίχωση Αυτιά & Μύτη με Κερί", en: "Ear & Nose Waxing" }, price: "5.00€" },
       { name: { el: "Ξύρισμα Αγγλικού Τύπου (Παραδοσιακό με Φαλτσέτα)", en: "English Shave (traditional straight razor)" }, price: "15.00€" },
-      { name: { el: "Περιποίηση SPA", en: "SPA Treatment" }, items: [
-        { name: { el: "Μάσκα Νεκράς Θάλασσας (Ενυδατώνει & Θρέφει την Επιδερμίδα)", en: "Dead Sea Mask (hydrates & nourishes the skin)" }, price: "5.00€" },
-        { name: { el: "Το Δεύτερο Λούσιμο", en: "The Second Wash" },        price: "2.00€" }
-      ] },
+      { name: { el: "Μάσκα Νεκράς Θάλασσας (Ενυδατώνει & Θρέφει την Επιδερμίδα)", en: "Dead Sea Mask (hydrates & nourishes the skin)" }, price: "5.00€" },
+      { name: { el: "Το Δεύτερο Λούσιμο", en: "The Second Wash" },        price: "2.00€" },
       // Package: the 50€ covers everything below (sub-items shown without a
       // per-item price on purpose — they're included, not free).
       { name: { el: "Γαμπριάτικο Πακέτο", en: "Groom's Package" }, price: "50.00€",

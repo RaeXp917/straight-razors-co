@@ -22,6 +22,30 @@
   const t = (obj) => (obj && (obj[lang] ?? obj.el ?? obj.en)) || "";   // localized field
   const tx = (v) => (typeof v === "string" ? v : t(v));               // string OR localized
   const ui = (key) => (UI_TEXT[lang] && UI_TEXT[lang][key]) || key;    // static UI string
+  const openingHoursTimeZone = () => (CFG.hours && CFG.hours.timezone) || "Europe/Athens";
+  const todayOpeningHoursText = () => {
+    const days = (CFG.hours && Array.isArray(CFG.hours.days)) ? CFG.hours.days : [];
+    const timeZone = openingHoursTimeZone();
+    const weekdayKey = new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone })
+      .format(new Date()).toLowerCase();
+    const day = days.find((entry) => String(entry.key || entry.en || "").toLowerCase() === weekdayKey);
+    const dayName = day
+      ? (day[lang] || day.el || day.en || "")
+      : new Intl.DateTimeFormat(lang === "el" ? "el-GR" : "en-US", { weekday: "long", timeZone }).format(new Date());
+    const opening = day ? tx(day.open).trim() : "";
+    const isClosed = !day || day.closed === true || !opening || /^(?:κλειστά|closed)(?:\s*\/\s*(?:closed|κλειστά))?$/i.test(opening);
+    return `${ui("today")} ${dayName}: ${isClosed ? ui("closed") : opening}`;
+  };
+  const updateTodayOpeningHours = () => {
+    document.querySelectorAll("[data-today-opening-hours]").forEach((node) => {
+      node.textContent = todayOpeningHoursText();
+    });
+  };
+  let todayOpeningHoursTimer = null;
+  const startTodayOpeningHoursRefresh = () => {
+    if (todayOpeningHoursTimer || typeof window.setInterval !== "function") return;
+    todayOpeningHoursTimer = window.setInterval(updateTodayOpeningHours, 60 * 1000);
+  };
   const el = (tag, cls, html) => {
     const n = document.createElement(tag);
     if (cls) n.className = cls;
@@ -215,6 +239,12 @@
       cta.appendChild(call);
     }
     if (liveTokens) fillLiveTokens(sec);
+    if (!layout().includes("booking")) {
+      const todayHours = el("span", "today-opening-hours", todayOpeningHoursText());
+      todayHours.dataset.todayOpeningHours = "true";
+      todayHours.setAttribute("aria-live", "polite");
+      sec.querySelector(".hero-cta").appendChild(todayHours);
+    }
     // (No "Οδηγίες"/Directions button over the hero — removed by request. The
     //  Google map still lives in the bottom location section.)
     return sec;
@@ -635,6 +665,10 @@
       wa.href = "https://wa.me/" + CFG.contact.whatsapp.replace(/[^\d]/g, "");
       wa.target = "_blank"; wa.rel = "noopener"; actions.appendChild(wa);
     }
+    const todayHours = el("p", "booking-hours", todayOpeningHoursText());
+    todayHours.dataset.todayOpeningHours = "true";
+    todayHours.setAttribute("aria-live", "polite");
+    actions.appendChild(todayHours);
     return sec;
   }
 
@@ -666,7 +700,7 @@
     const hb = sec.querySelector("#hoursBlock");
     if (CFG.hours && CFG.hours.enabled !== false && CFG.hours.days) {
       hb.innerHTML = `<h3>${icon("clock")} ${ui("hours")}</h3>` +
-        CFG.hours.days.map((d) => `<div class="row"><span class="d">${escapeHtml(d[lang] || d.el)}</span><span>${escapeHtml(d.open)}</span></div>`).join("");
+        CFG.hours.days.map((d) => `<div class="row"><span class="d">${escapeHtml(d[lang] || d.el)}</span><span>${escapeHtml(d.closed ? ui("closed") : (tx(d.open) || ui("closed")))}</span></div>`).join("");
     } else hb.remove();
 
     const btns = sec.querySelector(".contact-btns");
@@ -873,7 +907,7 @@
     let hoursBlock = "";
     if (CFG.hours && CFG.hours.enabled !== false && CFG.hours.days) {
       hoursBlock = `<div class="hours loc-hours"><h3>${icon("clock")} ${ui("hours")}</h3>` +
-        CFG.hours.days.map((d) => `<div class="row"><span class="d">${escapeHtml(d[lang] || d.el)}</span><span>${escapeHtml(d.open)}</span></div>`).join("") +
+        CFG.hours.days.map((d) => `<div class="row"><span class="d">${escapeHtml(d[lang] || d.el)}</span><span>${escapeHtml(d.closed ? ui("closed") : (tx(d.open) || ui("closed")))}</span></div>`).join("") +
         `</div>`;
     }
 
@@ -1241,5 +1275,6 @@
   applyTheme();
   setFavicon();
   renderAll();
+  startTodayOpeningHoursRefresh();
   listenForPreviewChanges();
 })();

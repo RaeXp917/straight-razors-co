@@ -147,6 +147,7 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 .hero h1 { color: var(--primary); font-size: clamp(2.2rem, 6vw, 4rem); margin-bottom: 18px; }
 .hero p { font-size: clamp(1rem, 2.4vw, 1.3rem); opacity: .95; margin-bottom: 30px; }
 .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.hero-cta .today-opening-hours { flex: 0 0 100%; margin: 0; }
 
 /* ---------- Sections ---------- */
 .section { padding: 84px 0; }
@@ -491,6 +492,7 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 .booking-copy h2 { color: var(--primary); font-size: clamp(1.5rem, 3.5vw, 2.1rem); margin-bottom: 6px; }
 .booking-copy p { color: color-mix(in srgb, var(--primary) 82%, transparent); max-width: 46ch; }
 .booking-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.booking-actions .booking-hours { flex: 0 0 100%; margin: 0; color: inherit; }
 
 @media (max-width: 560px) {
   .ba-pair { grid-template-columns: 1fr 1fr; }
