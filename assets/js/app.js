@@ -34,11 +34,16 @@
       : new Intl.DateTimeFormat(lang === "el" ? "el-GR" : "en-US", { weekday: "long", timeZone }).format(new Date());
     const opening = day ? tx(day.open).trim() : "";
     const isClosed = !day || day.closed === true || !opening || /^(?:κλειστά|closed)(?:\s*\/\s*(?:closed|κλειστά))?$/i.test(opening);
-    return `${ui("today")} ${dayName}: ${isClosed ? ui("closed") : opening}`;
+    const today = escapeHtml(ui("today"));
+    const safeDayName = escapeHtml(dayName);
+    if (isClosed) {
+      return `${today} <strong>${safeDayName}</strong> ${escapeHtml(ui("shop_closed"))}`;
+    }
+    return `${today} <strong>${safeDayName}</strong> ${escapeHtml(ui("shop_open"))}<br><strong>${escapeHtml(opening)}</strong>`;
   };
   const updateTodayOpeningHours = () => {
     document.querySelectorAll("[data-today-opening-hours]").forEach((node) => {
-      node.textContent = todayOpeningHoursText();
+      node.innerHTML = todayOpeningHoursText();
     });
   };
   let todayOpeningHoursTimer = null;
