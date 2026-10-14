@@ -24,20 +24,18 @@ const SITE_CONFIG = {
     },
     // logo can be an ICON NAME (see assets/js/icons.js), an image path, or emoji
     assetsDir: "assets/brands/straight-razors", // swap this folder for the next client
-    logo: "logo.png",                  // resolved inside assetsDir
+    logo: "assets/img/logo-flat.png", // finalized logo asset already in the project
     showName: false,                   // crest already contains the business name
-    favicon: "logo.png"
+    favicon: "assets/img/logo-flat.png"
   },
 
   /* --- 4. THEME (colors + font) -------------------------------------------- */
   theme: {
     primary:   "#F3EEE4",   // warm marble-white text on dark
-    accent:    "#C9A227",   // gold vein — richer/more saturated than flat brass
-    accent2:   "#8C6E1F",   // deeper gold for hovers
+    brandGold: "#E8B92A",   // experimental preview gold; single source for branded accents
     emerald:   "#1F3A2E",   // pulled from the mirror wall — secondary CTA/hover
     bg:        "#0B0B0C",   // true black leather/marble base
     surface:   "#161613",
-    wood:      "#B08D5B",   // cabinetry tone — dividers / about badge
     font:      "'Fraunces', 'Poppins', serif",  // serif DISPLAY face (headings)
     radius:    "4px",       // sharp corners — boutique, not generic pill
     dark:      true
@@ -297,7 +295,7 @@ const SITE_CONFIG = {
   priceList: {
     enabled: true,
     title: { el: "ΤΙΜΟΚΑΤΑΛΟΓΟΣ", en: "PRICE LIST" },
-    logo: "logo.png",   // resolved from brand.assetsDir (the crest already in use)
+    logo: "assets/img/logo-flat.png", // use the same finalized logo as the rest of the site
     items: [
       { name: { el: "Κούρεμα Ανδρικό", en: "Men's Haircut" },              price: "12.00€" },
       { name: { el: "Κούρεμα Παιδικό", en: "Kids' Haircut" },              price: "10.00€" },

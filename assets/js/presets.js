@@ -172,7 +172,7 @@ const BUSINESS_PRESETS = {
       team:     { el: "Το προσωπικό μας", en: "Our barbers" },
       gallery:  { el: "Ο χώρος μας",      en: "Our shop" }
     },
-    theme: { primary: "#f3eee4", accent: "#c9a227", accent2: "#8c6e1f", bg: "#0b0b0c", surface: "#161613", wood: "#b08d5b", dark: true },
+    theme: { primary: "#f3eee4", bg: "#0b0b0c", surface: "#161613", dark: true },
     demo: {
       tagline: { el: "Κουρείο για άντρες & παιδιά", en: "Barber shop for men & kids" },
       about: { text: { el: "Επαγγελματικό κούρεμα, ξύρισμα και περιποίηση σε έναν καθαρό, φιλόξενο χώρο.", en: "Professional haircuts, shaves and grooming in a clean, welcoming space." } },

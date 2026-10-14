@@ -189,13 +189,17 @@
                   bg: "--bg", surface: "--surface", emerald: "--emerald",
                   wood: "--wood", font: "--font", radius: "--radius" };
     Object.keys(map).forEach((k) => { if (th[k]) r.setProperty(map[k], th[k]); });
+    if (th.brandGold) {
+      document.documentElement.style.setProperty("--brand-gold", th.brandGold);
+      ["--accent", "--accent2", "--wood"].forEach((name) => r.setProperty(name, "var(--brand-gold)"));
+    }
     document.body.classList.toggle("dark", !!th.dark);
   }
 
   function setFavicon() {
     const v = brandAsset("favicon", CFG.brand.favicon || CFG.brand.logo, "logo.png") || preset.icon;
     if (isImg(v)) { $("favicon").href = v; return; }
-    const accent = (CFG.theme && CFG.theme.accent) || (preset.theme && preset.theme.accent) || "#c69a5b";
+    const accent = (CFG.theme && (CFG.theme.brandGold || CFG.theme.accent)) || (preset.theme && preset.theme.accent) || "#777777";
     let svg;
     if (hasIcons && ICONS[v]) {
       svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="${accent}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[v]}</svg>`;

@@ -5,10 +5,11 @@
 
 :root {
   --primary: #111827;
-  --accent:  #c9a24b;
-  --accent2: #8a6d2f;
+  --brand-gold: #6b7280; /* neutral fallback; the client color is set from config.js */
+  --accent:  var(--brand-gold);
+  --accent2: var(--brand-gold);
   --emerald: #1F3A2E;   /* NEW — mirror-wall green, one signature accent */
-  --wood:    #B08D5B;   /* NEW — cabinetry tone, dividers / about badge   */
+  --wood:    var(--brand-gold);
   --bg:      #ffffff;
   --surface: #f7f5f0;
   --font:    'Fraunces', 'Poppins', serif;  /* DISPLAY face — headings only */
@@ -116,7 +117,7 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
   border: none; background: transparent; padding: 6px 12px; cursor: pointer;
   font-family: inherit; font-weight: 600; font-size: 13px; color: var(--muted);
 }
-.lang-switch button.active { background: var(--accent); color: #fff; }
+.lang-switch button.active { background: var(--accent); color: #0B0B0C; }
 
 .burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; }
 .burger span { width: 24px; height: 2px; background: var(--primary); transition: .3s; }
@@ -186,7 +187,7 @@ svg.ic { width: 24px; height: 24px; display: inline-block; vertical-align: middl
 .about-rating:hover { color: var(--accent2); border-bottom-color: var(--accent2); }
 .about-badge {
   display: grid; place-items: center;
-  background: transparent; border: 0; box-shadow: none;   /* no brown box — the black page bg shows through, white logo centered */
+  background: transparent; border: 0; box-shadow: none;   /* logo sits directly on the page background */
 }
 
 /* ---------- Services ---------- */
